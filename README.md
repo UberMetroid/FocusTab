@@ -7,6 +7,8 @@ Transform your new tab page into a focused productivity powerhouse with **FocusT
 - **Single Daily Focus:** Set one primary goal for the day to maintain laser-like focus.
 - **Rest Days:** Optionally leave your focus empty for a well-deserved rest day.
 - **Daily Quotes:** Rotating motivational quotes to keep you inspired.
+- **Progress Tracking:** View your streak, longest streak, and weekly activity chart.
+- **Background Customization:** Choose from gradient presets or upload your own image.
 - **Anime-Inspired Design:** A visually engaging interface with subtle animations.
 - **Dark Mode:** Toggle between light and dark themes for comfortable viewing.
 - **Persistent Storage:** Your focus and preferences are saved across sessions.
@@ -48,6 +50,11 @@ Transform your new tab page into a focused productivity powerhouse with **FocusT
 
 5. **Rest when needed** — Leave the input empty to set a rest day
 
+### Hidden Features
+
+- **Progress Panel:** Press `Ctrl+Shift+P` to view your streak stats and weekly chart
+- **Background Customization:** In the progress panel, select gradient presets or upload your own image (max 2MB)
+
 ## 🔧 Troubleshooting
 
 ### Focus not saving
@@ -73,6 +80,11 @@ Transform your new tab page into a focused productivity powerhouse with **FocusT
 - Check that FocusTab is enabled in `chrome://extensions/`
 - Ensure no other extension is overriding new tab pages
 - Try setting FocusTab as your default in Chrome settings
+
+### Progress stats not updating
+- Complete a focus task to increment your streak
+- Streak only counts when you complete a task (not just setting one)
+- Rest days don't break your streak — only missing a day without completing does
 
 ## 🤝 Contributing
 
