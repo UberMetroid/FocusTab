@@ -71,12 +71,11 @@
         "It does not matter how slowly you go as long as you do not stop. - Confucius",
         "Believe you can and you're halfway there. - Theodore Roosevelt",
         "Your focus determines your reality. - George Lucas",
-        "Star Wars",
+        "May the Force be with you. - Star Wars",
         "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
         "Hakuna Matata! - The Lion King",
         "Just do it! - Nike",
         "I will be the change that I wish to see in the world. - Gandhi",
-        "May the Force be with you. - Star Wars",
         "With great power comes great responsibility. - Spider-Man",
         "A journey of a thousand miles begins with a single step. - Lao Tzu",
         "The best time to plant a tree was 20 years ago. The second best time is now. - Chinese Proverb",
@@ -346,9 +345,16 @@
         }
 
         const reader = new FileReader();
+        reader.onerror = () => {
+            showError('Failed to read image file');
+        };
         reader.onload = async (e) => {
-            await setBackground({ type: 'custom', image: e.target.result });
-            renderBackgroundSelector();
+            try {
+                await setBackground({ type: 'custom', image: e.target.result });
+                renderBackgroundSelector();
+            } catch (err) {
+                showError('Failed to save image (may be too large for storage)');
+            }
         };
         reader.readAsDataURL(file);
     };
@@ -380,7 +386,8 @@
 
         const uploadInput = document.getElementById('bgUpload');
         if (uploadInput) {
-            uploadInput.addEventListener('change', handleImageUpload);
+            uploadInput.replaceWith(uploadInput.cloneNode(true));
+            document.getElementById('bgUpload')?.addEventListener('change', handleImageUpload);
         }
     };
 
