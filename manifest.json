@@ -24,7 +24,10 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "focustab@ubermetroid.github.com"
+      "id": "focustab@ubermetroid.github.com",
+      "data_collection_permissions": {
+        "required": []
+      }
     }
   }
 }
