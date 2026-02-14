@@ -26,7 +26,7 @@
     "gecko": {
       "id": "focustab@ubermetroid.github.com",
       "data_collection_permissions": {
-        "required": []
+        "required": "none"
       }
     }
   }
