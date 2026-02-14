@@ -195,7 +195,7 @@
         return div.innerHTML;
     };
 
-    const renderTodos = (todos) => {
+    const renderTodos = async (todos) => {
         const todoList = get('todoList');
         const questCount = get('questCount');
         if (!todoList) return;
@@ -211,7 +211,8 @@
             </li>
         `).join('');
 
-        if (questCount) questCount.textContent = todos.filter(t => !t.completed).length;
+        const streakData = await getStreakData();
+        if (questCount) questCount.textContent = streakData.totalCompleted;
 
         todoList.querySelectorAll('.quest-checkbox').forEach(cb => {
             cb.addEventListener('click', async (e) => {
