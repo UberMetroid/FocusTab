@@ -2,14 +2,25 @@
     'use strict';
 
     const STORAGE_KEYS = {
-        DAILY_FOCUS: 'dailyFocus',
         DARK_MODE: 'darkMode',
         STREAK_DATA: 'streakData',
-        BACKGROUND: 'background',
         TODOS: 'todos',
         QUICK_LINKS: 'quickLinks',
         TIMER_MINUTES: 'timerMinutes'
     };
+
+    const BACKGROUND_PRESETS = [
+        { id: 'default', name: 'Seasonal', gradient: getSeasonalGradient() },
+        { id: 'spring', name: 'Spring', gradient: 'linear-gradient(135deg, #e056fd 0%, #be2edd 100%)' },
+        { id: 'summer', name: 'Summer', gradient: 'linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%)' },
+        { id: 'autumn', name: 'Autumn', gradient: 'linear-gradient(135deg, #fd79a8 0%, #e84393 100%)' },
+        { id: 'winter', name: 'Winter', gradient: 'linear-gradient(135deg, #a29bfe 0%, #2d1b4e 100%)' },
+        { id: 'sunset', name: 'Sunset', gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)' },
+        { id: 'ocean', name: 'Ocean', gradient: 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)' },
+        { id: 'forest', name: 'Forest', gradient: 'linear-gradient(135deg, #134e5e 0%, #71b280 100%)' },
+        { id: 'purple', name: 'Purple Dream', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
+        { id: 'pink', name: 'Sakura', gradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)' }
+    ];
 
     const getSeasonalGradient = () => {
         const month = new Date().getMonth();
@@ -19,54 +30,56 @@
         return 'linear-gradient(135deg, #a29bfe 0%, #2d1b4e 100%)';
     };
 
-    const BACKGROUND_PRESETS = [
-        { id: 'default', name: 'Seasonal', gradient: getSeasonalGradient() },
-        { id: 'spring', name: 'Spring', gradient: 'linear-gradient(135deg, #e056fd 0%, #be2edd 100%)' },
-        { id: 'summer', name: 'Summer', gradient: 'linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%)' },
-        { id: 'autumn', name: 'Autumn', gradient: 'linear-gradient(135deg, #fd79a8 0%, #e84393 100%)' },
-        { id: 'winter', name: 'Winter', gradient: 'linear-gradient(135deg, #a29bfe 0%, #2d1b4e 100%)' },
-        { id: 'sunset', name: 'Sunset', gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)' },
-        { id: 'ocean', name: 'Ocean', gradient: 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)' },
-        { id: 'forest', name: 'Forest', gradient: 'linear-gradient(135deg, #134e5e 0%, #71b280 100%)' },
-        { id: 'purple', name: 'Purple Dream', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
-        { id: 'pink', name: 'Sakura', gradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)' }
-    ];
-
     const elements = {
         darkModeToggle: document.getElementById('darkModeToggle'),
-        setFocusArea: document.getElementById('setFocusArea'),
-        activeFocusArea: document.getElementById('activeFocusArea'),
-        setFocusButton: document.getElementById('setFocusButton'),
-        newFocusInput: document.getElementById('newFocusInput'),
-        focusText: document.getElementById('focusText'),
-        completeFocusButton: document.getElementById('completeFocusButton'),
-        fireworks: document.getElementById('fireworks'),
-        inputError: document.getElementById('inputError'),
-        dailyQuote: document.getElementById('dailyQuote'),
-        progressPanel: document.getElementById('progressPanel'),
-        streakCount: document.getElementById('streakCount'),
-        longestStreak: document.getElementById('longestStreak'),
-        totalCompleted: document.getElementById('totalCompleted'),
-        weeklyBars: document.getElementById('weeklyBars'),
-        closeProgressPanel: document.getElementById('closeProgressPanel'),
-        currentTime: document.getElementById('currentTime'),
-        currentDate: document.getElementById('currentDate'),
         todoList: document.getElementById('todoList'),
         addTodoBtn: document.getElementById('addTodoBtn'),
+        newQuestInput: document.getElementById('newQuestInput'),
+        addQuestForm: document.getElementById('addQuestForm'),
         timerMinutes: document.getElementById('timerMinutes'),
         timerSeconds: document.getElementById('timerSeconds'),
+        timerProgress: document.getElementById('timerProgress'),
         startTimerBtn: document.getElementById('startTimerBtn'),
-        resetTimerBtn: document.getElementById('resetTimerBtn'),
         quickLinks: document.getElementById('quickLinks'),
         addLinkBtn: document.getElementById('addLinkBtn'),
         weatherDisplay: document.getElementById('weatherDisplay'),
         locationDisplay: document.getElementById('locationDisplay'),
-        exportDataBtn: document.getElementById('exportDataBtn')
+        dailyQuote: document.getElementById('dailyQuote'),
+        progressPanel: document.getElementById('progressPanel'),
+        statsToggle: document.getElementById('statsToggle'),
+        closeProgressPanel: document.getElementById('closeProgressPanel'),
+        streakCount: document.getElementById('streakCount'),
+        longestStreak: document.getElementById('longestStreak'),
+        totalCompleted: document.getElementById('totalCompleted'),
+        weeklyBars: document.getElementById('weeklyBars'),
+        questCount: document.getElementById('questCount'),
+        exportDataBtn: document.getElementById('exportDataBtn'),
+        currentTime: document.getElementById('currentTime'),
+        currentDate: document.getElementById('currentDate')
     };
 
     let timerInterval = null;
     let timerSecondsRemaining = 25 * 60;
     let timerRunning = false;
+    let totalTimerSeconds = 25 * 60;
+
+    const QUOTES = [
+        "One step at a time. You've got this!",
+        "Focus is the key to all success.",
+        "Small progress is still progress.",
+        "You're doing great! Keep going!",
+        "Every moment counts. Make it matter.",
+        "The best time to start is now.",
+        "Dream big, work hard, stay focused.",
+        "Progress, not perfection.",
+        "You've survived 100% of your hardest days.",
+        "Success is built one task at a time.",
+        "Keep showing up. That's the secret.",
+        "Your future self will thank you.",
+        "Be present. Be focused. Be grateful.",
+        "Done is better than perfect.",
+        "You are capable of amazing things."
+    ];
 
     const getTodayKey = () => new Date().toISOString().split('T')[0];
 
@@ -84,36 +97,6 @@
         totalCompleted: 0
     });
 
-    const getStreakData = async () => {
-        const data = await getStorage(STORAGE_KEYS.STREAK_DATA);
-        return data || getDefaultStreakData();
-    };
-
-    const saveStreakData = async (data) => {
-        await setStorage(STORAGE_KEYS.STREAK_DATA, data);
-    };
-
-    const QUOTES = [
-        "Praise Aqua! Your goddess is watching. - Aqua",
-        "Kazuma! Stop being lazy and worship me! - Aqua",
-        "The goddess Aqua grants you strength! Now get to work!",
-        "Even I, the great Aqua, have to work sometimes...",
-        "May your quests be fruitful, my follower!",
-        "Want to hear about my great achievements? Just finish your tasks first!",
-        "I didn't become a goddess to see you procrastinate!",
-        "Your productivity is my greatest creation!",
-        "Focus like you're praying to the great Aqua!",
-        "Even darkness fears the light of a productive mortal!",
-        "Hakuna Matata! ...Wait, that's not my line! - Aqua",
-        "Just do it! ...Wait, that's a human brand. Aqua says: Just worship it!",
-        "Your focus determines your reality. Or my magic. Probably my magic. - Aqua",
-        "A journey of a thousand miles begins with a single prayer to Aqua!",
-        "The best time to start worshipping was yesterday. The second best time is now!",
-        "Action is the foundational key to all success. And praise!",
-        "Hard work beats talent when talent doesn't work hard. Especially if you're Kazuma.",
-        "Dream big and dare to fail. Then pray to Aqua for forgiveness!"
-    ];
-
     const getStorage = (key) => {
         return new Promise((resolve) => {
             const storage = window.browser?.storage || window.chrome.storage;
@@ -121,7 +104,6 @@
                 storage.local.get(key, (data) => {
                     const error = window.browser?.runtime?.lastError || window.chrome.runtime?.lastError;
                     if (error) {
-                        console.warn('Storage error, falling back to localStorage:', error);
                         resolve(localStorage.getItem(key));
                     } else {
                         resolve(data[key]);
@@ -138,11 +120,6 @@
             const storage = window.browser?.storage || window.chrome.storage;
             if (storage) {
                 storage.local.set({ [key]: value }, () => {
-                    const error = window.browser?.runtime?.lastError || window.chrome.runtime?.lastError;
-                    if (error) {
-                        console.warn('Storage error, falling back to localStorage:', error);
-                        localStorage.setItem(key, value);
-                    }
                     resolve();
                 });
             } else {
@@ -152,321 +129,23 @@
         });
     };
 
-    const showError = (message) => {
-        elements.inputError.textContent = message;
-        elements.inputError.style.display = 'block';
-        setTimeout(() => {
-            elements.inputError.style.display = 'none';
-            elements.inputError.textContent = '';
-        }, 3000);
-    };
-
-    const clearError = () => {
-        elements.inputError.textContent = '';
-        elements.inputError.style.display = 'none';
-    };
-
     const showFireworks = () => {
-        elements.fireworks.style.display = 'block';
-        elements.fireworks.setAttribute('aria-hidden', 'false');
-        setTimeout(() => {
-            elements.fireworks.style.display = 'none';
-            elements.fireworks.setAttribute('aria-hidden', 'true');
-        }, 3000);
-    };
-
-    const showSetFocusArea = () => {
-        elements.setFocusArea.style.display = 'block';
-        elements.activeFocusArea.style.display = 'none';
-        elements.newFocusInput.value = '';
-        elements.newFocusInput.focus();
-        elements.completeFocusButton.textContent = 'Complete';
-        clearError();
-    };
-
-    const showActiveFocusArea = (focus) => {
-        elements.setFocusArea.style.display = 'none';
-        elements.activeFocusArea.style.display = 'flex';
-        elements.focusText.textContent = `Focus with all your power! ${focus}`;
-    };
-
-    const saveFocus = async () => {
-        const focus = elements.newFocusInput.value.trim();
-        
-        if (focus.length > 200) {
-            showError('Focus task is too long (max 200 characters)');
-            return false;
-        }
-
-        try {
-            await setStorage(STORAGE_KEYS.DAILY_FOCUS, focus);
-            if (focus) {
-                showActiveFocusArea(focus);
-            } else {
-                showRestDayArea();
-            }
-            return true;
-        } catch (error) {
-            console.error('Error saving focus:', error);
-            showError('Failed to save focus. Please try again.');
-            return false;
-        }
-    };
-
-    const showRestDayArea = () => {
-        elements.setFocusArea.style.display = 'none';
-        elements.activeFocusArea.style.display = 'flex';
-        elements.focusText.textContent = 'Take a rest, senpai! You deserve it.';
-        elements.completeFocusButton.textContent = 'Set Focus';
-    };
-
-    const completeFocus = async () => {
-        try {
-            await setStorage(STORAGE_KEYS.DAILY_FOCUS, '');
-            await updateProgress();
-            showSetFocusArea();
-            showFireworks();
-        } catch (error) {
-            console.error('Error clearing focus:', error);
-            showError('Failed to complete focus. Please try again.');
-        }
-    };
-
-    const updateProgress = async () => {
-        const streakData = await getStreakData();
-        const today = getTodayKey();
-        const yesterday = getYesterdayKey();
-
-        if (streakData.lastCompleted === today) {
-            return;
-        }
-
-        if (streakData.lastCompleted === yesterday) {
-            streakData.current += 1;
-        } else {
-            streakData.current = 1;
-        }
-
-        if (streakData.current > streakData.longest) {
-            streakData.longest = streakData.current;
-        }
-
-        streakData.lastCompleted = today;
-        streakData.totalCompleted += 1;
-
-        streakData.weeklyHistory[today] = (streakData.weeklyHistory[today] || 0) + 1;
-
-        const sevenDaysAgo = new Date();
-        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        Object.keys(streakData.weeklyHistory).forEach(key => {
-            if (new Date(key) < sevenDaysAgo) {
-                delete streakData.weeklyHistory[key];
-            }
-        });
-
-        await saveStreakData(streakData);
-    };
-
-    const renderProgress = async () => {
-        const streakData = await getStreakData();
-        elements.streakCount.textContent = streakData.current;
-        elements.longestStreak.textContent = streakData.longest;
-        elements.totalCompleted.textContent = streakData.totalCompleted;
-
-        const days = [];
-        for (let i = 6; i >= 0; i--) {
-            const d = new Date();
-            d.setDate(d.getDate() - i);
-            days.push(d.toISOString().split('T')[0]);
-        }
-
-        const maxCount = Math.max(1, ...Object.values(streakData.weeklyHistory));
-
-        elements.weeklyBars.innerHTML = days.map(day => {
-            const count = streakData.weeklyHistory[day] || 0;
-            const height = Math.max(10, (count / maxCount) * 100);
-            const dayName = new Date(day).toLocaleDateString('en', { weekday: 'short' });
-            const isToday = day === getTodayKey();
-            return `<div class="week-bar-container">
-                <div class="week-bar" style="height: ${height}%" title="${count} completed"></div>
-                <span class="week-day${isToday ? ' today' : ''}">${dayName}</span>
-            </div>`;
-        }).join('');
-    };
-
-    const toggleProgressPanel = async () => {
-        const isVisible = elements.progressPanel.style.display === 'block';
-        elements.progressPanel.style.display = isVisible ? 'none' : 'block';
-        if (!isVisible) {
-            await renderProgress();
-        }
-    };
-
-    const setFocusFromRest = () => {
-        elements.setFocusArea.style.display = 'block';
-        elements.activeFocusArea.style.display = 'none';
-        elements.newFocusInput.value = '';
-        elements.newFocusInput.focus();
-    };
-
-    const toggleDarkMode = async (isDarkMode) => {
-        document.body.classList.toggle('dark-mode', isDarkMode);
-        try {
-            await setStorage(STORAGE_KEYS.DARK_MODE, isDarkMode);
-        } catch (error) {
-            console.error('Error saving dark mode preference:', error);
-        }
-    };
-
-    const initializeDarkMode = async () => {
-        try {
-            const darkMode = await getStorage(STORAGE_KEYS.DARK_MODE);
-            if (darkMode) {
-                document.body.classList.add('dark-mode');
-                elements.darkModeToggle.checked = true;
-            }
-        } catch (error) {
-            console.error('Error loading dark mode preference:', error);
-        }
-    };
-
-    const applyBackground = (background) => {
-        if (background.type === 'custom' && background.image) {
-            document.body.style.background = `url(${background.image}) center/cover no-repeat fixed`;
-        } else if (background.preset && background.preset !== 'default') {
-            const preset = BACKGROUND_PRESETS.find(p => p.id === background.preset);
-            if (preset) {
-                document.body.style.background = preset.gradient;
-            }
-        } else {
-            document.body.style.background = getSeasonalGradient();
-        }
-    };
-
-    const initializeBackground = async () => {
-        try {
-            const background = await getStorage(STORAGE_KEYS.BACKGROUND);
-            if (background) {
-                applyBackground(background);
-            } else {
-                applyBackground({ preset: 'default' });
-            }
-        } catch (error) {
-            console.error('Error loading background preference:', error);
-            applyBackground({ preset: 'default' });
-        }
-    };
-
-    const setBackground = async (background) => {
-        try {
-            await setStorage(STORAGE_KEYS.BACKGROUND, background);
-            applyBackground(background);
-        } catch (error) {
-            console.error('Error saving background preference:', error);
-        }
-    };
-
-    const initializeFocus = async () => {
-        try {
-            const dailyFocus = await getStorage(STORAGE_KEYS.DAILY_FOCUS);
-            if (dailyFocus && dailyFocus.trim()) {
-                showActiveFocusArea(dailyFocus);
-            } else if (dailyFocus === '') {
-                showRestDayArea();
-            } else {
-                showSetFocusArea();
-            }
-        } catch (error) {
-            console.error('Error loading focus:', error);
-            showSetFocusArea();
-        }
-    };
-
-    const showRandomQuote = () => {
-        const randomIndex = Math.floor(Math.random() * QUOTES.length);
-        elements.dailyQuote.textContent = QUOTES[randomIndex];
-    };
-
-    const setupEventListeners = () => {
-        let darkModeDebounceTimer;
-
-        document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.shiftKey && e.key === 'S') {
-                e.preventDefault();
-                toggleProgressPanel();
-            }
-        });
-
-        elements.darkModeToggle.addEventListener('change', () => {
-            clearTimeout(darkModeDebounceTimer);
-            darkModeDebounceTimer = setTimeout(() => {
-                toggleDarkMode(elements.darkModeToggle.checked);
-            }, 150);
-        });
-
-        elements.setFocusButton.addEventListener('click', () => {
-            saveFocus();
-        });
-
-        elements.newFocusInput.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                saveFocus();
-            }
-        });
-
-        elements.newFocusInput.addEventListener('input', () => {
-            clearError();
-        });
-
-        elements.completeFocusButton.addEventListener('click', () => {
-            if (elements.completeFocusButton.textContent === 'Set Focus') {
-                setFocusFromRest();
-            } else {
-                completeFocus();
-            }
-        });
-
-        if (elements.closeProgressPanel) {
-            elements.closeProgressPanel.addEventListener('click', () => {
-                elements.progressPanel.style.display = 'none';
-            });
-        }
-
-        if (elements.addTodoBtn) {
-            elements.addTodoBtn.addEventListener('click', addTodo);
-        }
-
-        if (elements.startTimerBtn) {
-            elements.startTimerBtn.addEventListener('click', toggleTimer);
-        }
-
-        if (elements.resetTimerBtn) {
-            elements.resetTimerBtn.addEventListener('click', resetTimer);
-        }
-
-        document.querySelectorAll('.timer-preset').forEach(btn => {
-            btn.addEventListener('click', () => {
-                setTimerDuration(parseInt(btn.dataset.minutes));
-            });
-        });
-
-        if (elements.addLinkBtn) {
-            elements.addLinkBtn.addEventListener('click', addQuickLink);
-        }
-
-        if (elements.exportDataBtn) {
-            elements.exportDataBtn.addEventListener('click', exportData);
+        const fireworks = document.getElementById('fireworks');
+        if (fireworks) {
+            fireworks.style.display = 'block';
+            setTimeout(() => {
+                fireworks.style.display = 'none';
+            }, 3000);
         }
     };
 
     const updateTime = () => {
         const now = new Date();
         if (elements.currentTime) {
-            elements.currentTime.textContent = now.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', hour12: true });
+            elements.currentTime.textContent = now.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', hour12: false });
         }
         if (elements.currentDate) {
-            elements.currentDate.textContent = now.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' });
+            elements.currentDate.textContent = now.toLocaleDateString('en', { weekday: 'long', month: 'short', day: 'numeric' });
         }
     };
 
@@ -477,43 +156,56 @@
 
     const renderTodos = (todos) => {
         if (!elements.todoList) return;
-        elements.todoList.innerHTML = todos.map((todo, index) => `
-            <li class="todo-item ${todo.completed ? 'completed' : ''}">
-                <input type="checkbox" ${todo.completed ? 'checked' : ''} data-index="${index}">
-                <label>${todo.text}</label>
-                <button class="delete-todo" data-index="${index}">&times;</button>
+        
+        const incomplete = todos.filter(t => !t.completed);
+        const completed = todos.filter(t => t.completed);
+        
+        elements.todoList.innerHTML = [...incomplete, ...completed].map((todo, index) => `
+            <li class="quest-item ${todo.completed ? 'completed' : ''}">
+                <div class="quest-checkbox ${todo.completed ? 'checked' : ''}" data-index="${index}"></div>
+                <span class="quest-text">${escapeHtml(todo.text)}</span>
+                <button class="quest-delete" data-index="${index}">&times;</button>
             </li>
         `).join('');
 
-        elements.todoList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-            cb.addEventListener('change', async (e) => {
+        elements.questCount.textContent = todos.filter(t => !t.completed).length;
+
+        elements.todoList.querySelectorAll('.quest-checkbox').forEach(cb => {
+            cb.addEventListener('click', async (e) => {
                 const todos = await getStorage(STORAGE_KEYS.TODOS) || [];
-                const wasCompleted = todos[e.target.dataset.index].completed;
-                todos[e.target.dataset.index].completed = e.target.checked;
-                await setStorage(STORAGE_KEYS.TODOS, todos);
-                if (e.target.checked && !wasCompleted) {
+                const idx = parseInt(e.target.dataset.index);
+                const todo = todos[idx];
+                if (todo && !todo.completed) {
+                    todo.completed = true;
+                    await setStorage(STORAGE_KEYS.TODOS, todos);
                     await updateProgress();
                     showFireworks();
+                    renderTodos(todos);
                 }
-                renderTodos(todos);
             });
         });
 
-        elements.todoList.querySelectorAll('.delete-todo').forEach(btn => {
+        elements.todoList.querySelectorAll('.quest-delete').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 const todos = await getStorage(STORAGE_KEYS.TODOS) || [];
-                todos.splice(e.target.dataset.index, 1);
+                const idx = parseInt(e.target.dataset.index);
+                todos.splice(idx, 1);
                 await setStorage(STORAGE_KEYS.TODOS, todos);
                 renderTodos(todos);
             });
         });
     };
 
-    const addTodo = async () => {
-        const text = prompt('Enter a todo:');
-        if (!text) return;
+    const escapeHtml = (text) => {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    };
+
+    const addTodo = async (text) => {
+        if (!text || !text.trim()) return;
         const todos = await getStorage(STORAGE_KEYS.TODOS) || [];
-        todos.push({ text, completed: false });
+        todos.push({ text: text.trim(), completed: false });
         await setStorage(STORAGE_KEYS.TODOS, todos);
         renderTodos(todos);
     };
@@ -524,16 +216,22 @@
         const secs = timerSecondsRemaining % 60;
         elements.timerMinutes.textContent = mins.toString().padStart(2, '0');
         elements.timerSeconds.textContent = secs.toString().padStart(2, '0');
+        
+        const progress = ((totalTimerSeconds - timerSecondsRemaining) / totalTimerSeconds) * 565.48;
+        if (elements.timerProgress) {
+            elements.timerProgress.style.strokeDashoffset = 565.48 - progress;
+        }
     };
 
     const toggleTimer = () => {
+        const btn = elements.startTimerBtn.querySelector('.btn-text');
         if (timerRunning) {
             clearInterval(timerInterval);
             timerRunning = false;
-            elements.startTimerBtn.textContent = 'Begin';
+            btn.textContent = 'Start';
         } else {
             timerRunning = true;
-            elements.startTimerBtn.textContent = 'Pause';
+            btn.textContent = 'Pause';
             timerInterval = setInterval(() => {
                 if (timerSecondsRemaining > 0) {
                     timerSecondsRemaining--;
@@ -541,7 +239,7 @@
                 } else {
                     clearInterval(timerInterval);
                     timerRunning = false;
-                    elements.startTimerBtn.textContent = 'Begin';
+                    btn.textContent = 'Start';
                     showFireworks();
                 }
             }, 1000);
@@ -551,17 +249,24 @@
     const resetTimer = () => {
         clearInterval(timerInterval);
         timerRunning = false;
-        elements.startTimerBtn.textContent = 'Begin';
+        const btn = elements.startTimerBtn.querySelector('.btn-text');
+        btn.textContent = 'Start';
         setTimerDuration(25);
     };
 
     const setTimerDuration = async (minutes) => {
         clearInterval(timerInterval);
         timerRunning = false;
-        elements.startTimerBtn.textContent = 'Start';
+        const btn = elements.startTimerBtn.querySelector('.btn-text');
+        btn.textContent = 'Start';
+        totalTimerSeconds = minutes * 60;
         timerSecondsRemaining = minutes * 60;
         await setStorage(STORAGE_KEYS.TIMER_MINUTES, minutes);
         updateTimerDisplay();
+        
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.classList.toggle('active', parseInt(btn.dataset.minutes) === minutes);
+        });
     };
 
     const loadQuickLinks = async () => {
@@ -572,13 +277,13 @@
     const renderQuickLinks = (links) => {
         if (!elements.quickLinks) return;
         elements.quickLinks.innerHTML = links.map((link, index) => `
-            <a href="${link.url}" class="quick-link" target="_blank">
-                ${link.name}
-                <button class="delete-link" data-index="${index}">&times;</button>
+            <a href="${escapeHtml(link.url)}" class="link-item" target="_blank">
+                ${escapeHtml(link.name)}
+                <button class="link-delete" data-index="${index}">&times;</button>
             </a>
         `).join('');
 
-        elements.quickLinks.querySelectorAll('.delete-link').forEach(btn => {
+        elements.quickLinks.querySelectorAll('.link-delete').forEach(btn => {
             btn.addEventListener('click', async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -607,12 +312,16 @@
         const fetchWeather = async (location) => {
             try {
                 const url = location 
-                    ? `https://wttr.in/${location}?format=%l+%c%t`
-                    : 'https://wttr.in/?format=%l+%c%t';
+                    ? `https://wttr.in/${location}?format=%l+%t`
+                    : 'https://wttr.in/?format=%l+%t';
                 const response = await fetch(url);
                 if (response.ok) {
                     const text = await response.text();
-                    elements.weatherDisplay.textContent = text.trim();
+                    const parts = text.trim().split(' ');
+                    if (parts.length >= 2) {
+                        elements.locationDisplay.textContent = parts[0];
+                        elements.weatherDisplay.textContent = parts.slice(1).join(' ');
+                    }
                 }
             } catch (e) {
                 elements.weatherDisplay.textContent = '';
@@ -625,23 +334,92 @@
                     const { latitude, longitude } = position.coords;
                     fetchWeather(`${latitude},${longitude}`);
                 },
-                () => {
-                    fetchWeather(null);
-                }
+                () => fetchWeather(null)
             );
         } else {
             fetchWeather(null);
         }
     };
 
+    const getStreakData = async () => {
+        const data = await getStorage(STORAGE_KEYS.STREAK_DATA);
+        return data || getDefaultStreakData();
+    };
+
+    const updateProgress = async () => {
+        const streakData = await getStreakData();
+        const today = getTodayKey();
+        const yesterday = getYesterdayKey();
+
+        if (streakData.lastCompleted === today) return;
+
+        if (streakData.lastCompleted === yesterday) {
+            streakData.current += 1;
+        } else {
+            streakData.current = 1;
+        }
+
+        if (streakData.current > streakData.longest) {
+            streakData.longest = streakData.current;
+        }
+
+        streakData.lastCompleted = today;
+        streakData.totalCompleted += 1;
+        streakData.weeklyHistory[today] = (streakData.weeklyHistory[today] || 0) + 1;
+
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        Object.keys(streakData.weeklyHistory).forEach(key => {
+            if (new Date(key) < sevenDaysAgo) {
+                delete streakData.weeklyHistory[key];
+            }
+        });
+
+        await setStorage(STORAGE_KEYS.STREAK_DATA, streakData);
+    };
+
+    const renderProgress = async () => {
+        const streakData = await getStreakData();
+        elements.streakCount.textContent = streakData.current;
+        elements.longestStreak.textContent = streakData.longest;
+        elements.totalCompleted.textContent = streakData.totalCompleted;
+
+        const days = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            days.push(d.toISOString().split('T')[0]);
+        }
+
+        const maxCount = Math.max(1, ...Object.values(streakData.weeklyHistory));
+
+        elements.weeklyBars.innerHTML = days.map(day => {
+            const count = streakData.weeklyHistory[day] || 0;
+            const height = Math.max(4, (count / maxCount) * 80);
+            const dayName = new Date(day).toLocaleDateString('en', { weekday: 'short' }).slice(0, 1);
+            const isToday = day === getTodayKey();
+            return `
+                <div class="bar-wrapper">
+                    <div class="bar-fill" style="height: ${height}px"></div>
+                    <span class="bar-label ${isToday ? 'today' : ''}">${dayName}</span>
+                </div>
+            `;
+        }).join('');
+    };
+
+    const toggleProgressPanel = async () => {
+        const isVisible = elements.progressPanel.style.display === 'block';
+        elements.progressPanel.style.display = isVisible ? 'none' : 'block';
+        if (!isVisible) {
+            await renderProgress();
+        }
+    };
+
     const exportData = async () => {
         const data = {
-            focus: await getStorage(STORAGE_KEYS.DAILY_FOCUS),
-            darkMode: await getStorage(STORAGE_KEYS.DARK_MODE),
-            streakData: await getStorage(STORAGE_KEYS.STREAK_DATA),
-            background: await getStorage(STORAGE_KEYS.BACKGROUND),
             todos: await getStorage(STORAGE_KEYS.TODOS),
             quickLinks: await getStorage(STORAGE_KEYS.QUICK_LINKS),
+            streakData: await getStorage(STORAGE_KEYS.STREAK_DATA),
             exportedAt: new Date().toISOString()
         };
 
@@ -654,23 +432,105 @@
         URL.revokeObjectURL(url);
     };
 
-    const init = () => {
+    const applyBackground = (background) => {
+        if (background?.type === 'custom' && background.image) {
+            document.body.style.background = `url(${background.image}) center/cover no-repeat fixed`;
+        } else if (background?.preset && background.preset !== 'default') {
+            const preset = BACKGROUND_PRESETS.find(p => p.id === background.preset);
+            if (preset) {
+                document.body.style.background = preset.gradient;
+            }
+        } else {
+            document.body.style.background = getSeasonalGradient();
+        }
+    };
+
+    const initializeBackground = async () => {
+        try {
+            const background = await getStorage('background');
+            if (background) {
+                applyBackground(background);
+            } else {
+                applyBackground({ preset: 'default' });
+            }
+        } catch (error) {
+            applyBackground({ preset: 'default' });
+        }
+    };
+
+    const toggleDarkMode = async (isDarkMode) => {
+        document.body.classList.toggle('dark-mode', isDarkMode);
+        await setStorage(STORAGE_KEYS.DARK_MODE, isDarkMode);
+    };
+
+    const initializeDarkMode = async () => {
+        try {
+            const darkMode = await getStorage(STORAGE_KEYS.DARK_MODE);
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+            }
+        } catch (error) {
+            console.error('Error loading dark mode preference:', error);
+        }
+    };
+
+    const showRandomQuote = () => {
+        const randomIndex = Math.floor(Math.random() * QUOTES.length);
+        elements.dailyQuote.textContent = QUOTES[randomIndex];
+    };
+
+    const setupEventListeners = () => {
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+                e.preventDefault();
+                toggleProgressPanel();
+            }
+        });
+
+        elements.darkModeToggle?.addEventListener('click', () => {
+            toggleDarkMode(document.body.classList.contains('dark-mode') ? false : true);
+        });
+
+        elements.addQuestForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            addTodo(elements.newQuestInput.value);
+            elements.newQuestInput.value = '';
+        });
+
+        elements.startTimerBtn?.addEventListener('click', toggleTimer);
+
+        elements.resetTimerBtn?.addEventListener('click', resetTimer);
+
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setTimerDuration(parseInt(btn.dataset.minutes));
+            });
+        });
+
+        elements.addLinkBtn?.addEventListener('click', addQuickLink);
+
+        elements.statsToggle?.addEventListener('click', toggleProgressPanel);
+
+        elements.closeProgressPanel?.addEventListener('click', () => {
+            elements.progressPanel.style.display = 'none';
+        });
+
+        elements.exportDataBtn?.addEventListener('click', exportData);
+    };
+
+    const init = async () => {
         setupEventListeners();
         initializeDarkMode();
         initializeBackground();
-        initializeFocus();
-        showRandomQuote();
         updateTime();
         setInterval(updateTime, 1000);
         loadTodos();
         loadQuickLinks();
         loadWeather();
+        showRandomQuote();
         
-        (async () => {
-            const timerMinutes = await getStorage(STORAGE_KEYS.TIMER_MINUTES) || 25;
-            timerSecondsRemaining = timerMinutes * 60;
-            updateTimerDisplay();
-        })();
+        const timerMinutes = await getStorage(STORAGE_KEYS.TIMER_MINUTES) || 25;
+        setTimerDuration(timerMinutes);
     };
 
     if (document.readyState === 'loading') {
