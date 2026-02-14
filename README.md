@@ -1,154 +1,56 @@
-# FocusTab: Unleash Your Focus Power! ⚡️
+# FocusTab ⚡️
 
 [![License](https://img.shields.io/github/license/UberMetroid/FocusTab)](LICENSE)
 [![GitHub last commit](https://img.shields.io/github/last-commit/UberMetroid/FocusTab)](https://github.com/UberMetroid/FocusTab/commits/main)
 [![Repo stars](https://img.shields.io/github/stars/UberMetroid/FocusTab?style=social)](https://github.com/UberMetroid/FocusTab)
 
-Transform your new tab page into a focused productivity powerhouse with **FocusTab**! This minimalist Chrome/Chromium extension helps you eliminate distractions and concentrate on your most important daily task.
+A minimalist new tab extension that helps you focus on what matters. Complete quests, track your progress, and stay productive.
 
 ## ✨ Features
 
-- **Single Daily Focus:** Set one primary goal for the day to maintain laser-like focus.
-- **Rest Days:** Optionally leave your focus empty for a well-deserved rest day.
-- **Daily Quotes:** Rotating motivational quotes to keep you inspired.
-- **Progress Tracking:** View your streak, longest streak, and weekly activity chart.
-- **Background Customization:** Choose from gradient presets or upload your own image.
-- **Anime-Inspired Design:** A visually engaging interface with subtle animations.
-- **Dark Mode:** Toggle between light and dark themes for comfortable viewing.
-- **Persistent Storage:** Your focus and preferences are saved across sessions.
-- **Celebratory Fireworks:** Visual reward when you complete your task!
+- **Quest System:** Up to 3 active quests at a time - stay focused
+- **Pomodoro Timer:** Built-in focus timer (25/5/15 min presets)
+- **Progress Tracking:** Track your total completions and streaks
+- **Weekly Stats:** Visual chart of your weekly activity
+- **Dark/Light Mode:** Easy theme toggle
+- **Clean Design:** Simple, modern interface
+- **Celebration:** Fireworks when you complete a quest!
 
 ## 🚀 Installation
 
-### Chrome / Chromium (Sideloading)
+### Chrome / Chromium
 
-1. Clone or download this repository:
-   ```bash
-   git clone https://github.com/UberMetroid/FocusTab.git
-   ```
-   Or click "Code" → "Download ZIP" on GitHub.
-
-2. Open Chrome and navigate to `chrome://extensions/`
-
-3. Enable **Developer mode** (toggle in the top-right corner)
-
+1. Download this repository (click Code → Download ZIP)
+2. Open `chrome://extensions/`
+3. Enable **Developer mode**
 4. Click **Load unpacked**
+5. Select the FocusTab folder
 
-5. Select the `FocusTab` directory (the folder containing `manifest.json`)
+### Firefox
 
-### Other Browsers
+1. Open `about:debugging#/runtime/this-firefox`
+2. Click **Load Temporary Add-on**
+3. Select `manifest.json`
 
-- **Edge:** Use the same sideloading process at `edge://extensions/`
-- **Brave:** Use the same sideloading process at `brave://extensions/`
-- **Firefox:** See [临时扩展支持](https://extensionworkshop.com/?utm_source=devwebsite&utm_medium=website&utm_campaign=devoverview) for temporary installation, or convert using [web-ext](https://extensionworkshop.com/?utm_source=devwebsite&utm_medium=website&utm_campaign=devoverview)
+Or publish to Mozilla Add-ons for permanent installation.
 
-## 📖 Quick Start
+## 📖 How to Use
 
-1. **Open a new tab** — You'll see "What should you focus on, senpai?"
+1. **Add a Quest** — Type in the input and press Enter (max 3 at a time)
+2. **Complete a Quest** — Click the checkbox to mark done (animates and disappears)
+3. **Use the Timer** — Click Start/Pause, choose preset times
+4. **View Stats** — Click Stats button or press `Ctrl+Shift+S`
+5. **Toggle Theme** — Click the sun/moon icon
 
-2. **Enter your focus** — Type your main task for the day and press Enter (or click "Set Focus")
+## 🔧 Shortcuts
 
-3. **Stay focused** — Each new tab shows your focus with motivational text
+- `Ctrl+Shift+S` — Open stats panel
 
-4. **Complete your task** — Click "Complete" to celebrate with fireworks!
+## 🐛 Troubleshooting
 
-5. **Rest when needed** — Leave the input empty to set a rest day
-
-### Hidden Features
-
-- **Progress Panel:** Press `Ctrl+Shift+S` to view your streak stats and weekly chart
-- **Background Customization:** In the progress panel, select gradient presets or upload your own image (max 2MB)
-
-## 🔧 Troubleshooting
-
-### Focus not saving
-- Ensure you're using Chrome/Chromium with extension support
-- Try reloading the extension: Go to `chrome://extensions/` → click the reload icon on FocusTab
-- Check if "Site can save data" is allowed in extension details
-
-### Dark mode toggle not working
-- Make sure the toggle is clicked firmly (there's a 150ms debounce)
-- Refresh the extension as above
-
-### Storage sync issues
-- FocusTab uses local Chrome storage by default
-- If using browser sync, ensure sync is enabled in Chrome settings
-- Data persists locally even without sync
-
-### Extension not loading after update
-- Chrome may disable extensions from unknown developers
-- Re-enable in `chrome://extensions/` if you see a warning
-- Try removing and re-adding the extension
-
-### New tab not showing FocusTab
-- Check that FocusTab is enabled in `chrome://extensions/`
-- Ensure no other extension is overriding new tab pages
-- Try setting FocusTab as your default in Chrome settings
-
-### Progress stats not updating
-- Complete a focus task to increment your streak
-- Streak only counts when you complete a task (not just setting one)
-- Rest days don't break your streak — only missing a day without completing does
-
-## 🤝 Contributing
-
-We welcome contributions! Here's how to help:
-
-### Development Setup
-
-```bash
-# Fork the repository on GitHub
-# Clone your fork
-git clone https://github.com/<your-username>/FocusTab.git
-cd FocusTab
-
-# Create a feature branch
-git checkout -b feature/your-feature-name
-```
-
-### Making Changes
-
-1. Make your changes in a new branch
-2. Test locally by loading the unpacked extension
-3. Follow the existing code style:
-   - Use ES6+ with async/await
-   - CSS variables for theming
-   - Semantic HTML
-4. Commit with clear, descriptive messages
-
-### Submitting Changes
-
-1. Push to your fork: `git push origin feature/your-feature-name`
-2. Open a Pull Request against the `main` branch
-3. Describe your changes and why they're needed
-4. Wait for review — we appreciate all contributions!
-
-### Coding Standards
-
-- Use 4 spaces for indentation
-- Add comments for complex logic
-- Test in both light and dark modes
-- Ensure accessibility (keyboard navigation, screen reader support)
-
-## 🐞 Issues and Support
-
-- **Found a bug?** Open an issue on [GitHub Issues](https://github.com/UberMetroid/FocusTab/issues)
-- **Have a suggestion?** We'd love to hear it! Open a feature request
-- **Need help?** Check the troubleshooting section above or open an issue
-
-## 📋 Changelog
-
-See [CHANGELOG.md](./CHANGELOG.md) for version history and migration notes.
+- Extension not loading? Try removing and re-adding
+- Stats not updating? Complete a quest to increment
 
 ## 📜 License
 
-This project is open source under the [MIT License](./LICENSE).
-
-## 🔗 Links
-
-- **GitHub Repository:** [https://github.com/UberMetroid/FocusTab](https://github.com/UberMetroid/FocusTab)
-- **Report Issues:** [https://github.com/UberMetroid/FocusTab/issues](https://github.com/UberMetroid/FocusTab/issues)
-
----
-
-**Start conquering your day, one focus at a time!**
+MIT License - see [LICENSE](./LICENSE)
