@@ -114,18 +114,6 @@ body.dark-mode .preset-btn {
     gap: 12px;
 }
 
-.weather-badge {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    background: var(--surface);
-    padding: 8px 12px;
-    border-radius: var(--radius-full);
-    backdrop-filter: blur(10px);
-}
-
 /* Main Content */
 .main-content {
     flex: 1;

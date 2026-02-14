@@ -312,38 +312,6 @@
         });
     };
 
-    const loadWeather = async () => {
-        const weatherDisplay = get('weatherDisplay');
-        const locationDisplay = get('locationDisplay');
-        if (!weatherDisplay) return;
-
-        const fetchWeather = async (location) => {
-            try {
-                const url = location ? `https://wttr.in/${location}?format=%l+%t` : 'https://wttr.in/?format=%l+%t';
-                const response = await fetch(url);
-                if (response.ok) {
-                    const text = await response.text();
-                    const parts = text.trim().split(' ');
-                    if (parts.length >= 2) {
-                        if (locationDisplay) locationDisplay.textContent = parts[0];
-                        weatherDisplay.textContent = parts.slice(1).join(' ');
-                    }
-                }
-            } catch (e) {
-                console.error('Weather error:', e);
-            }
-        };
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (pos) => fetchWeather(`${pos.coords.latitude},${pos.coords.longitude}`),
-                () => fetchWeather(null)
-            );
-        } else {
-            fetchWeather(null);
-        }
-    };
-
     const applyBackground = (background) => {
         if (background?.type === 'custom' && background.image) {
             document.body.style.background = `url(${background.image}) center/cover no-repeat fixed`;
@@ -429,7 +397,6 @@
         updateTime();
         setInterval(updateTime, 1000);
         loadTodos();
-        loadWeather();
         showRandomQuote();
 
         const timerMinutes = await getStorage(STORAGE_KEYS.TIMER_MINUTES) || 25;
