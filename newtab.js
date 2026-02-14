@@ -642,14 +642,34 @@
 
     const loadWeather = async () => {
         if (!elements.weatherDisplay) return;
-        try {
-            const response = await fetch('https://wttr.in/?format=%c%t');
-            if (response.ok) {
-                const text = await response.text();
-                elements.weatherDisplay.textContent = text.trim();
+        
+        const fetchWeather = async (location) => {
+            try {
+                const url = location 
+                    ? `https://wttr.in/${location}?format=%c%t`
+                    : 'https://wttr.in/?format=%c%t';
+                const response = await fetch(url);
+                if (response.ok) {
+                    const text = await response.text();
+                    elements.weatherDisplay.textContent = text.trim();
+                }
+            } catch (e) {
+                elements.weatherDisplay.textContent = '';
             }
-        } catch (e) {
-            elements.weatherDisplay.textContent = '';
+        };
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    fetchWeather(`${latitude},${longitude}`);
+                },
+                () => {
+                    fetchWeather(null);
+                }
+            );
+        } else {
+            fetchWeather(null);
         }
     };
 
