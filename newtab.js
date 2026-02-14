@@ -11,8 +11,20 @@
         TIMER_MINUTES: 'timerMinutes'
     };
 
+    const getSeasonalGradient = () => {
+        const month = new Date().getMonth();
+        if (month >= 2 && month <= 4) return 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
+        if (month >= 5 && month <= 7) return 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)';
+        if (month >= 8 && month <= 10) return 'linear-gradient(135deg, #f5af19 0%, #f12711 100%)';
+        return 'linear-gradient(135deg, #e6e9f0 0%, #eef1f5 100%)';
+    };
+
     const BACKGROUND_PRESETS = [
-        { id: 'default', name: 'Default', gradient: 'linear-gradient(135deg, #fafafa 0%, #f7b731 100%)' },
+        { id: 'default', name: 'Seasonal', gradient: getSeasonalGradient() },
+        { id: 'spring', name: 'Spring', gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)' },
+        { id: 'summer', name: 'Summer', gradient: 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)' },
+        { id: 'autumn', name: 'Autumn', gradient: 'linear-gradient(135deg, #f5af19 0%, #f12711 100%)' },
+        { id: 'winter', name: 'Winter', gradient: 'linear-gradient(135deg, #e6e9f0 0%, #eef1f5 100%)' },
         { id: 'sunset', name: 'Sunset', gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)' },
         { id: 'ocean', name: 'Ocean', gradient: 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)' },
         { id: 'forest', name: 'Forest', gradient: 'linear-gradient(135deg, #134e5e 0%, #71b280 100%)' },
@@ -323,9 +335,13 @@
     const applyBackground = (background) => {
         if (background.type === 'custom' && background.image) {
             document.body.style.background = `url(${background.image}) center/cover no-repeat fixed`;
+        } else if (background.preset && background.preset !== 'default') {
+            const preset = BACKGROUND_PRESETS.find(p => p.id === background.preset);
+            if (preset) {
+                document.body.style.background = preset.gradient;
+            }
         } else {
-            const preset = BACKGROUND_PRESETS.find(p => p.id === background.preset) || BACKGROUND_PRESETS[0];
-            document.body.style.background = preset.gradient;
+            document.body.style.background = getSeasonalGradient();
         }
     };
 
@@ -334,9 +350,12 @@
             const background = await getStorage(STORAGE_KEYS.BACKGROUND);
             if (background) {
                 applyBackground(background);
+            } else {
+                applyBackground({ preset: 'default' });
             }
         } catch (error) {
             console.error('Error loading background preference:', error);
+            applyBackground({ preset: 'default' });
         }
     };
 
