@@ -200,12 +200,9 @@
         const questCount = get('questCount');
         if (!todoList) return;
 
-        const incomplete = todos.filter(t => !t.completed);
-        const completed = todos.filter(t => t.completed);
-
-        todoList.innerHTML = [...incomplete, ...completed].map((todo, index) => `
-            <li class="quest-item ${todo.completed ? 'completed' : ''}">
-                <div class="quest-checkbox ${todo.completed ? 'checked' : ''}" data-index="${index}"></div>
+        todoList.innerHTML = todos.map((todo, index) => `
+            <li class="quest-item">
+                <div class="quest-checkbox" data-index="${index}"></div>
                 <span class="quest-text">${escapeHtml(todo.text)}</span>
                 <button class="quest-delete" data-index="${index}">&times;</button>
             </li>
@@ -223,7 +220,7 @@
                     const questItem = e.target.closest('.quest-item');
                     questItem.classList.add('completing');
                     setTimeout(async () => {
-                        todo.completed = true;
+                        todos.splice(idx, 1);
                         await setStorage(STORAGE_KEYS.TODOS, todos);
                         await updateProgress();
                         showFireworks();
@@ -246,12 +243,11 @@
     const addTodo = async (text) => {
         if (!text || !text.trim()) return;
         const todos = await getStorage(STORAGE_KEYS.TODOS) || [];
-        const active = todos.filter(t => !t.completed);
-        if (active.length >= 3) {
+        if (todos.length >= 3) {
             alert('Maximum 3 active quests at a time. Complete one first!');
             return;
         }
-        todos.push({ text: text.trim(), completed: false });
+        todos.push({ text: text.trim() });
         await setStorage(STORAGE_KEYS.TODOS, todos);
         renderTodos(todos);
     };
