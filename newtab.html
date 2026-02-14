@@ -13,11 +13,17 @@
 </head>
 <body>
 
-    <div class="dark-mode-toggle-container">
-        <label class="switch" for="darkModeToggle" aria-label="Toggle dark mode">
-            <input type="checkbox" id="darkModeToggle">
-            <span class="slider round"></span>
-        </label>
+    <div class="top-bar">
+        <div class="time-container">
+            <span id="currentTime" class="current-time"></span>
+            <span id="currentDate" class="current-date"></span>
+        </div>
+        <div class="dark-mode-toggle-container">
+            <label class="switch" for="darkModeToggle" aria-label="Toggle dark mode">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider round"></span>
+            </label>
+        </div>
     </div>
 
     <main id="focusContainer">
@@ -44,10 +50,46 @@
             </div>
 
             <p id="dailyQuote" class="quote-text" aria-live="polite"></p>
+
+            <div class="todo-section">
+                <div class="todo-header">
+                    <h3>Quick Todos</h3>
+                    <button id="addTodoBtn" class="icon-btn" aria-label="Add todo">+</button>
+                </div>
+                <ul id="todoList" class="todo-list"></ul>
+            </div>
+
+            <div class="timer-section">
+                <div class="timer-display">
+                    <span id="timerMinutes">25</span>:<span id="timerSeconds">00</span>
+                </div>
+                <div class="timer-controls">
+                    <button id="startTimerBtn" class="timer-btn">Start</button>
+                    <button id="resetTimerBtn" class="timer-btn">Reset</button>
+                </div>
+                <div class="timer-presets">
+                    <button data-minutes="25" class="timer-preset">25m</button>
+                    <button data-minutes="5" class="timer-preset">5m</button>
+                    <button data-minutes="15" class="timer-preset">15m</button>
+                </div>
+            </div>
+
+            <div class="quick-links-section">
+                <div class="quick-links-header">
+                    <h3>Quick Links</h3>
+                    <button id="addLinkBtn" class="icon-btn" aria-label="Add link">+</button>
+                </div>
+                <div id="quickLinks" class="quick-links"></div>
+            </div>
+
+            <div class="weather-section">
+                <span id="weatherDisplay" class="weather-display"></span>
+            </div>
         </section>
     </main>
 
     <footer class="github-footer">
+        <span class="shortcut-hint" title="Press Ctrl+Shift+P for settings">Ctrl+Shift+P</span>
         <a href="https://github.com/UberMetroid/FocusTab" class="github-link" target="_blank" rel="noopener noreferrer">
             <span class="github-icon" aria-hidden="true">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -84,6 +126,9 @@
         <div class="background-section">
             <h3>Background</h3>
             <div id="backgroundPresets" class="background-presets"></div>
+        </div>
+        <div class="export-section">
+            <button id="exportDataBtn" class="export-btn">Export Data</button>
         </div>
         <p class="progress-hint">Press Ctrl+Shift+P to toggle</p>
     </div>

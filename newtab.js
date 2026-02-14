@@ -3,9 +3,13 @@
 
     const STORAGE_KEYS = {
         DAILY_FOCUS: 'dailyFocus',
+        DAILY_FOCUS: 'dailyFocus',
         DARK_MODE: 'darkMode',
         STREAK_DATA: 'streakData',
-        BACKGROUND: 'background'
+        BACKGROUND: 'background',
+        TODOS: 'todos',
+        QUICK_LINKS: 'quickLinks',
+        TIMER_MINUTES: 'timerMinutes'
     };
 
     const BACKGROUND_PRESETS = [
@@ -34,8 +38,24 @@
         totalCompleted: document.getElementById('totalCompleted'),
         weeklyBars: document.getElementById('weeklyBars'),
         closeProgressPanel: document.getElementById('closeProgressPanel'),
-        backgroundPresets: document.getElementById('backgroundPresets')
+        backgroundPresets: document.getElementById('backgroundPresets'),
+        currentTime: document.getElementById('currentTime'),
+        currentDate: document.getElementById('currentDate'),
+        todoList: document.getElementById('todoList'),
+        addTodoBtn: document.getElementById('addTodoBtn'),
+        timerMinutes: document.getElementById('timerMinutes'),
+        timerSeconds: document.getElementById('timerSeconds'),
+        startTimerBtn: document.getElementById('startTimerBtn'),
+        resetTimerBtn: document.getElementById('resetTimerBtn'),
+        quickLinks: document.getElementById('quickLinks'),
+        addLinkBtn: document.getElementById('addLinkBtn'),
+        weatherDisplay: document.getElementById('weatherDisplay'),
+        exportDataBtn: document.getElementById('exportDataBtn')
     };
+
+    let timerInterval = null;
+    let timerSecondsRemaining = 25 * 60;
+    let timerRunning = false;
 
     const getTodayKey = () => new Date().toISOString().split('T')[0];
 
@@ -457,6 +477,201 @@
                 elements.progressPanel.style.display = 'none';
             });
         }
+
+        if (elements.addTodoBtn) {
+            elements.addTodoBtn.addEventListener('click', addTodo);
+        }
+
+        if (elements.startTimerBtn) {
+            elements.startTimerBtn.addEventListener('click', toggleTimer);
+        }
+
+        if (elements.resetTimerBtn) {
+            elements.resetTimerBtn.addEventListener('click', resetTimer);
+        }
+
+        document.querySelectorAll('.timer-preset').forEach(btn => {
+            btn.addEventListener('click', () => {
+                setTimerDuration(parseInt(btn.dataset.minutes));
+            });
+        });
+
+        if (elements.addLinkBtn) {
+            elements.addLinkBtn.addEventListener('click', addQuickLink);
+        }
+
+        if (elements.exportDataBtn) {
+            elements.exportDataBtn.addEventListener('click', exportData);
+        }
+    };
+
+    const updateTime = () => {
+        const now = new Date();
+        if (elements.currentTime) {
+            elements.currentTime.textContent = now.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', hour12: true });
+        }
+        if (elements.currentDate) {
+            elements.currentDate.textContent = now.toLocaleDateString('en', { weekday: 'long', month: 'long', day: 'numeric' });
+        }
+    };
+
+    const loadTodos = async () => {
+        const todos = await getStorage(STORAGE_KEYS.TODOS) || [];
+        renderTodos(todos);
+    };
+
+    const renderTodos = (todos) => {
+        if (!elements.todoList) return;
+        elements.todoList.innerHTML = todos.map((todo, index) => `
+            <li class="todo-item ${todo.completed ? 'completed' : ''}">
+                <input type="checkbox" ${todo.completed ? 'checked' : ''} data-index="${index}">
+                <label>${todo.text}</label>
+                <button class="delete-todo" data-index="${index}">&times;</button>
+            </li>
+        `).join('');
+
+        elements.todoList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', async (e) => {
+                const todos = await getStorage(STORAGE_KEYS.TODOS) || [];
+                todos[e.target.dataset.index].completed = e.target.checked;
+                await setStorage(STORAGE_KEYS.TODOS, todos);
+                renderTodos(todos);
+            });
+        });
+
+        elements.todoList.querySelectorAll('.delete-todo').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const todos = await getStorage(STORAGE_KEYS.TODOS) || [];
+                todos.splice(e.target.dataset.index, 1);
+                await setStorage(STORAGE_KEYS.TODOS, todos);
+                renderTodos(todos);
+            });
+        });
+    };
+
+    const addTodo = async () => {
+        const text = prompt('Enter a todo:');
+        if (!text) return;
+        const todos = await getStorage(STORAGE_KEYS.TODOS) || [];
+        todos.push({ text, completed: false });
+        await setStorage(STORAGE_KEYS.TODOS, todos);
+        renderTodos(todos);
+    };
+
+    const updateTimerDisplay = () => {
+        if (!elements.timerMinutes || !elements.timerSeconds) return;
+        const mins = Math.floor(timerSecondsRemaining / 60);
+        const secs = timerSecondsRemaining % 60;
+        elements.timerMinutes.textContent = mins.toString().padStart(2, '0');
+        elements.timerSeconds.textContent = secs.toString().padStart(2, '0');
+    };
+
+    const toggleTimer = () => {
+        if (timerRunning) {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            elements.startTimerBtn.textContent = 'Start';
+        } else {
+            timerRunning = true;
+            elements.startTimerBtn.textContent = 'Pause';
+            timerInterval = setInterval(() => {
+                if (timerSecondsRemaining > 0) {
+                    timerSecondsRemaining--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    elements.startTimerBtn.textContent = 'Start';
+                    showFireworks();
+                }
+            }, 1000);
+        }
+    };
+
+    const resetTimer = () => {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        elements.startTimerBtn.textContent = 'Start';
+        setTimerDuration(25);
+    };
+
+    const setTimerDuration = async (minutes) => {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        elements.startTimerBtn.textContent = 'Start';
+        timerSecondsRemaining = minutes * 60;
+        await setStorage(STORAGE_KEYS.TIMER_MINUTES, minutes);
+        updateTimerDisplay();
+    };
+
+    const loadQuickLinks = async () => {
+        const links = await getStorage(STORAGE_KEYS.QUICK_LINKS) || [];
+        renderQuickLinks(links);
+    };
+
+    const renderQuickLinks = (links) => {
+        if (!elements.quickLinks) return;
+        elements.quickLinks.innerHTML = links.map((link, index) => `
+            <a href="${link.url}" class="quick-link" target="_blank">
+                ${link.name}
+                <button class="delete-link" data-index="${index}">&times;</button>
+            </a>
+        `).join('');
+
+        elements.quickLinks.querySelectorAll('.delete-link').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const links = await getStorage(STORAGE_KEYS.QUICK_LINKS) || [];
+                links.splice(e.target.dataset.index, 1);
+                await setStorage(STORAGE_KEYS.QUICK_LINKS, links);
+                renderQuickLinks(links);
+            });
+        });
+    };
+
+    const addQuickLink = async () => {
+        const name = prompt('Link name:');
+        if (!name) return;
+        const url = prompt('URL:');
+        if (!url) return;
+        const links = await getStorage(STORAGE_KEYS.QUICK_LINKS) || [];
+        links.push({ name, url: url.startsWith('http') ? url : 'https://' + url });
+        await setStorage(STORAGE_KEYS.QUICK_LINKS, links);
+        renderQuickLinks(links);
+    };
+
+    const loadWeather = async () => {
+        if (!elements.weatherDisplay) return;
+        try {
+            const response = await fetch('https://wttr.in/?format=%c%t');
+            if (response.ok) {
+                const text = await response.text();
+                elements.weatherDisplay.textContent = text.trim();
+            }
+        } catch (e) {
+            elements.weatherDisplay.textContent = '';
+        }
+    };
+
+    const exportData = async () => {
+        const data = {
+            focus: await getStorage(STORAGE_KEYS.DAILY_FOCUS),
+            darkMode: await getStorage(STORAGE_KEYS.DARK_MODE),
+            streakData: await getStorage(STORAGE_KEYS.STREAK_DATA),
+            background: await getStorage(STORAGE_KEYS.BACKGROUND),
+            todos: await getStorage(STORAGE_KEYS.TODOS),
+            quickLinks: await getStorage(STORAGE_KEYS.QUICK_LINKS),
+            exportedAt: new Date().toISOString()
+        };
+
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `focustab-backup-${getTodayKey()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
     };
 
     const init = () => {
@@ -465,6 +680,17 @@
         initializeBackground();
         initializeFocus();
         showRandomQuote();
+        updateTime();
+        setInterval(updateTime, 1000);
+        loadTodos();
+        loadQuickLinks();
+        loadWeather();
+        
+        (async () => {
+            const timerMinutes = await getStorage(STORAGE_KEYS.TIMER_MINUTES) || 25;
+            timerSecondsRemaining = timerMinutes * 60;
+            updateTimerDisplay();
+        })();
     };
 
     if (document.readyState === 'loading') {
