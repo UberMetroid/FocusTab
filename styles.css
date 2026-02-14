@@ -381,6 +381,20 @@ body.dark-mode .preset-btn {
     opacity: 0.5;
 }
 
+.quest-item.completing {
+    animation: questComplete 0.4s ease-out forwards;
+}
+
+@keyframes questComplete {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); background: var(--success); }
+    100% { transform: scale(0); opacity: 0; }
+}
+
+body.dark-mode .quest-item.completing {
+    background: var(--success);
+}
+
 .quest-item.completed .quest-text {
     text-decoration: line-through;
 }
@@ -640,23 +654,59 @@ body.dark-mode .moon-icon { display: block; }
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
-    margin-bottom: 32px;
+    margin-bottom: 24px;
+}
+
+.stats-main {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.stat-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 8px 32px rgba(155, 89, 182, 0.3);
+}
+
+.stat-circle .stat-value {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-circle .stat-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-top: 4px;
 }
 
 .stat-card {
-    background: var(--surface);
+    background: white;
     border-radius: var(--radius-md);
     padding: 20px;
     text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .stat-card {
+    background: #2c2c2e;
 }
 
 .stat-card .stat-value {
     display: block;
     font-size: 2rem;
     font-weight: 700;
-    color: var(--primary-light);
+    color: var(--primary);
 }
 
 .stat-card .stat-label {

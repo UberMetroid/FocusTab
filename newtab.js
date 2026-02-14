@@ -219,11 +219,15 @@
                 const idx = parseInt(e.target.dataset.index);
                 const todo = todos[idx];
                 if (todo && !todo.completed) {
-                    todo.completed = true;
-                    await setStorage(STORAGE_KEYS.TODOS, todos);
-                    await updateProgress();
-                    showFireworks();
-                    renderTodos(todos);
+                    const questItem = e.target.closest('.quest-item');
+                    questItem.classList.add('completing');
+                    setTimeout(async () => {
+                        todo.completed = true;
+                        await setStorage(STORAGE_KEYS.TODOS, todos);
+                        await updateProgress();
+                        showFireworks();
+                        renderTodos(todos);
+                    }, 400);
                 }
             });
         });
