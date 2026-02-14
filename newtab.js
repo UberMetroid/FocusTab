@@ -49,7 +49,6 @@
         totalCompleted: document.getElementById('totalCompleted'),
         weeklyBars: document.getElementById('weeklyBars'),
         closeProgressPanel: document.getElementById('closeProgressPanel'),
-        backgroundPresets: document.getElementById('backgroundPresets'),
         currentTime: document.getElementById('currentTime'),
         currentDate: document.getElementById('currentDate'),
         todoList: document.getElementById('todoList'),
@@ -300,7 +299,6 @@
         elements.progressPanel.style.display = isVisible ? 'none' : 'block';
         if (!isVisible) {
             await renderProgress();
-            await renderBackgroundSelector();
         }
     };
 
@@ -365,67 +363,6 @@
             applyBackground(background);
         } catch (error) {
             console.error('Error saving background preference:', error);
-        }
-    };
-
-    const handleImageUpload = (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        if (!file.type.startsWith('image/')) {
-            showError('Please select an image file');
-            return;
-        }
-
-        if (file.size > 2 * 1024 * 1024) {
-            showError('Image must be under 2MB');
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onerror = () => {
-            showError('Failed to read image file');
-        };
-        reader.onload = async (e) => {
-            try {
-                await setBackground({ type: 'custom', image: e.target.result });
-                renderBackgroundSelector();
-            } catch (err) {
-                showError('Failed to save image (may be too large for storage)');
-            }
-        };
-        reader.readAsDataURL(file);
-    };
-
-    const renderBackgroundSelector = async () => {
-        const container = elements.backgroundPresets;
-        if (!container) return;
-
-        const current = await getStorage(STORAGE_KEYS.BACKGROUND) || { preset: 'default', type: 'preset' };
-
-        container.innerHTML = BACKGROUND_PRESETS.map(preset => `
-            <button class="preset-btn ${current.type === 'preset' && current.preset === preset.id ? 'active' : ''}"
-                    data-preset="${preset.id}"
-                    style="background: ${preset.gradient}"
-                    title="${preset.name}"></button>
-        `).join('') + `
-            <label class="upload-btn" title="Upload custom image">
-                <input type="file" id="bgUpload" accept="image/*" style="display: none;">
-                <span>+</span>
-            </label>
-        `;
-
-        container.querySelectorAll('.preset-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                await setBackground({ type: 'preset', preset: btn.dataset.preset });
-                renderBackgroundSelector();
-            });
-        });
-
-        const uploadInput = document.getElementById('bgUpload');
-        if (uploadInput) {
-            uploadInput.replaceWith(uploadInput.cloneNode(true));
-            document.getElementById('bgUpload')?.addEventListener('change', handleImageUpload);
         }
     };
 
