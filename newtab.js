@@ -241,6 +241,11 @@
     const addTodo = async (text) => {
         if (!text || !text.trim()) return;
         const todos = await getStorage(STORAGE_KEYS.TODOS) || [];
+        const active = todos.filter(t => !t.completed);
+        if (active.length >= 3) {
+            alert('Maximum 3 active quests at a time. Complete one first!');
+            return;
+        }
         todos.push({ text: text.trim(), completed: false });
         await setStorage(STORAGE_KEYS.TODOS, todos);
         renderTodos(todos);
