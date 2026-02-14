@@ -40,6 +40,48 @@ body.dark-mode {
     background: var(--bg-dark);
 }
 
+.app-container {
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 20px;
+    gap: 16px;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.timer-box,
+.quests-section {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.options-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+body.dark-mode .timer-box,
+body.dark-mode .quests-section,
+body.dark-mode .options-box {
+    background: #2c2c2e;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
 body.dark-mode .app-container {
     background: rgba(30, 30, 30, 0.9);
 }
@@ -466,16 +508,6 @@ body.dark-mode .preset-btn {
 
 .link-delete:hover {
     opacity: 1;
-}
-
-/* Footer */
-.app-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
-    margin-top: auto;
 }
 
 .footer-left {
