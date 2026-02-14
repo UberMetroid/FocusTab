@@ -3,7 +3,6 @@
 
     const STORAGE_KEYS = {
         DAILY_FOCUS: 'dailyFocus',
-        DAILY_FOCUS: 'dailyFocus',
         DARK_MODE: 'darkMode',
         STREAK_DATA: 'streakData',
         BACKGROUND: 'background',
