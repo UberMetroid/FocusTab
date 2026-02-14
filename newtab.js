@@ -60,6 +60,7 @@
         quickLinks: document.getElementById('quickLinks'),
         addLinkBtn: document.getElementById('addLinkBtn'),
         weatherDisplay: document.getElementById('weatherDisplay'),
+        locationDisplay: document.getElementById('locationDisplay'),
         exportDataBtn: document.getElementById('exportDataBtn')
     };
 
@@ -488,8 +489,13 @@
         elements.todoList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
             cb.addEventListener('change', async (e) => {
                 const todos = await getStorage(STORAGE_KEYS.TODOS) || [];
+                const wasCompleted = todos[e.target.dataset.index].completed;
                 todos[e.target.dataset.index].completed = e.target.checked;
                 await setStorage(STORAGE_KEYS.TODOS, todos);
+                if (e.target.checked && !wasCompleted) {
+                    await updateProgress();
+                    showFireworks();
+                }
                 renderTodos(todos);
             });
         });
@@ -602,8 +608,8 @@
         const fetchWeather = async (location) => {
             try {
                 const url = location 
-                    ? `https://wttr.in/${location}?format=%c%t`
-                    : 'https://wttr.in/?format=%c%t';
+                    ? `https://wttr.in/${location}?format=%l+%c%t`
+                    : 'https://wttr.in/?format=%l+%c%t';
                 const response = await fetch(url);
                 if (response.ok) {
                     const text = await response.text();

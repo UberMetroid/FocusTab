@@ -920,6 +920,15 @@ body.dark-mode .quick-links-header h3 {
 .weather-section {
     margin-top: 15px;
     text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.location-display {
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    opacity: 0.8;
 }
 
 .weather-display {

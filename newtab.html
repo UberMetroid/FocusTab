@@ -33,27 +33,11 @@
         </div>
 
         <section id="focusArea" aria-labelledby="focusHeading">
-            <h1 id="focusHeading" class="sr-only">Focus Setting</h1>
-            
-            <div id="activeFocusArea" style="display: none;">
-                <p id="focusText" aria-live="polite"></p>
-                <button id="completeFocusButton" class="complete-button" aria-label="Mark focus as complete">Complete</button>
-            </div>
-
-            <div id="setFocusArea">
-                <p class="anime-text">What should you focus on, senpai?</p>
-                <label for="newFocusInput" class="sr-only">Enter your focus</label>
-                <input type="text" id="newFocusInput" placeholder="Enter your focus (or leave empty for a rest day)" aria-describedby="focusInputDescription">
-                <p id="focusInputDescription" class="sr-only">Type your focus task and press Enter or click Set Focus. Leave empty and press Enter for a rest day.</p>
-                <button id="setFocusButton">Set Focus</button>
-                <p id="inputError" class="error-message" role="alert" aria-live="assertive"></p>
-            </div>
-
             <p id="dailyQuote" class="quote-text" aria-live="polite"></p>
 
             <div class="todo-section">
                 <div class="todo-header">
-                    <h3>Quick Todos</h3>
+                    <h3>Today's Tasks</h3>
                     <button id="addTodoBtn" class="icon-btn" aria-label="Add todo">+</button>
                 </div>
                 <ul id="todoList" class="todo-list"></ul>
@@ -83,6 +67,7 @@
             </div>
 
             <div class="weather-section">
+                <span id="locationDisplay" class="location-display"></span>
                 <span id="weatherDisplay" class="weather-display"></span>
             </div>
         </section>
