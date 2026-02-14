@@ -1,26 +1,26 @@
 :root {
-    --primary-color: #FF69B4;
-    --secondary-color: #FFB7B7;
-    --accent-color: #f7b731;
-    --background-light: #fafafa;
-    --background-dark: #1a1a1a;
-    --background-dark-secondary: #2d51a3;
-    --text-light: #333;
+    --primary-color: #9b59b6;
+    --secondary-color: #e056fd;
+    --accent-color: #f093fb;
+    --background-light: #a29bfe;
+    --background-dark: #2d1b4e;
+    --background-dark-secondary: #4a1c6b;
+    --text-light: #fff;
     --text-dark: #fff;
-    --container-bg-light: rgba(255, 255, 255, 0.9);
-    --container-bg-dark: #2d2d2d;
-    --shadow-color: rgba(31, 38, 135, 0.37);
-    --shadow-color-dark: rgba(255, 255, 255, 0.1);
-    --input-border-light: #FFB7B7;
-    --input-border-dark: #4d4d4d;
-    --input-bg-dark: #3d3d3d;
-    --button-gradient-start: #FF69B4;
-    --button-gradient-end: #FFB7B7;
-    --button-complete-gradient-start: #ff6b6b;
-    --button-complete-gradient-end: #ff8e8e;
-    --switch-bg: #ccc;
-    --switch-checked-bg: #4CAF50;
-    --error-color: #e74c3c;
+    --container-bg-light: rgba(155, 89, 182, 0.85);
+    --container-bg-dark: rgba(45, 27, 78, 0.9);
+    --shadow-color: rgba(155, 89, 182, 0.5);
+    --shadow-color-dark: rgba(224, 86, 253, 0.2);
+    --input-border-light: #e056fd;
+    --input-border-dark: #9b59b6;
+    --input-bg-dark: #4a1c6b;
+    --button-gradient-start: #9b59b6;
+    --button-gradient-end: #e056fd;
+    --button-complete-gradient-start: #f093fb;
+    --button-complete-gradient-end: #f5576c;
+    --switch-bg: #6c5ce7;
+    --switch-checked-bg: #a29bfe;
+    --error-color: #fd79a8;
 
     --font-family-primary: 'Nunito', sans-serif;
     --font-family-secondary: 'Quicksand', sans-serif;
@@ -136,6 +136,30 @@ body.dark-mode #newFocusInput {
     align-items: center;
     text-align: center;
     transition: background-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.greeting-text {
+    font-size: 1.3rem;
+    color: var(--text-light);
+    margin-bottom: 20px;
+    font-style: italic;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    animation: float 3s ease-in-out infinite;
+}
+
+body.dark-mode .greeting-text {
+    color: var(--text-dark);
+}
+
+.timer-label {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-bottom: 5px;
+    opacity: 0.8;
+}
+
+body.dark-mode .timer-label {
+    color: var(--text-dark);
 }
 
 h1 {

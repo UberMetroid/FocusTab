@@ -13,18 +13,18 @@
 
     const getSeasonalGradient = () => {
         const month = new Date().getMonth();
-        if (month >= 2 && month <= 4) return 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)';
-        if (month >= 5 && month <= 7) return 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)';
-        if (month >= 8 && month <= 10) return 'linear-gradient(135deg, #f5af19 0%, #f12711 100%)';
-        return 'linear-gradient(135deg, #e6e9f0 0%, #eef1f5 100%)';
+        if (month >= 2 && month <= 4) return 'linear-gradient(135deg, #e056fd 0%, #be2edd 100%)';
+        if (month >= 5 && month <= 7) return 'linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%)';
+        if (month >= 8 && month <= 10) return 'linear-gradient(135deg, #fd79a8 0%, #e84393 100%)';
+        return 'linear-gradient(135deg, #a29bfe 0%, #2d1b4e 100%)';
     };
 
     const BACKGROUND_PRESETS = [
         { id: 'default', name: 'Seasonal', gradient: getSeasonalGradient() },
-        { id: 'spring', name: 'Spring', gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)' },
-        { id: 'summer', name: 'Summer', gradient: 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)' },
-        { id: 'autumn', name: 'Autumn', gradient: 'linear-gradient(135deg, #f5af19 0%, #f12711 100%)' },
-        { id: 'winter', name: 'Winter', gradient: 'linear-gradient(135deg, #e6e9f0 0%, #eef1f5 100%)' },
+        { id: 'spring', name: 'Spring', gradient: 'linear-gradient(135deg, #e056fd 0%, #be2edd 100%)' },
+        { id: 'summer', name: 'Summer', gradient: 'linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%)' },
+        { id: 'autumn', name: 'Autumn', gradient: 'linear-gradient(135deg, #fd79a8 0%, #e84393 100%)' },
+        { id: 'winter', name: 'Winter', gradient: 'linear-gradient(135deg, #a29bfe 0%, #2d1b4e 100%)' },
         { id: 'sunset', name: 'Sunset', gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)' },
         { id: 'ocean', name: 'Ocean', gradient: 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)' },
         { id: 'forest', name: 'Forest', gradient: 'linear-gradient(135deg, #134e5e 0%, #71b280 100%)' },
@@ -94,25 +94,24 @@
     };
 
     const QUOTES = [
-        "The only way to do great work is to love what you do. - Steve Jobs",
-        "Focus on being productive instead of busy. - Tim Ferriss",
-        "Success is the sum of small efforts, repeated day in and day out. - Robert Collier",
-        "Don't watch the clock; do what it does. Keep going. - Sam Levenson",
-        "The secret of getting ahead is getting started. - Mark Twain",
-        "It does not matter how slowly you go as long as you do not stop. - Confucius",
-        "Believe you can and you're halfway there. - Theodore Roosevelt",
-        "Your focus determines your reality. - George Lucas",
-        "May the Force be with you. - Star Wars",
-        "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
-        "Hakuna Matata! - The Lion King",
-        "Just do it! - Nike",
-        "I will be the change that I wish to see in the world. - Gandhi",
-        "With great power comes great responsibility. - Spider-Man",
-        "A journey of a thousand miles begins with a single step. - Lao Tzu",
-        "The best time to plant a tree was 20 years ago. The second best time is now. - Chinese Proverb",
-        "Action is the foundational key to all success. - Pablo Picasso",
-        "Hard work beats talent when talent doesn't work hard. - Tim Notke",
-        "Dream big and dare to fail. - Norman Vaughan"
+        "Praise Aqua! Your goddess is watching. - Aqua",
+        "Kazuma! Stop being lazy and worship me! - Aqua",
+        "The goddess Aqua grants you strength! Now get to work!",
+        "Even I, the great Aqua, have to work sometimes...",
+        "May your quests be fruitful, my follower!",
+        "Want to hear about my great achievements? Just finish your tasks first!",
+        "I didn't become a goddess to see you procrastinate!",
+        "Your productivity is my greatest creation!",
+        "Focus like you're praying to the great Aqua!",
+        "Even darkness fears the light of a productive mortal!",
+        "Hakuna Matata! ...Wait, that's not my line! - Aqua",
+        "Just do it! ...Wait, that's a human brand. Aqua says: Just worship it!",
+        "Your focus determines your reality. Or my magic. Probably my magic. - Aqua",
+        "A journey of a thousand miles begins with a single prayer to Aqua!",
+        "The best time to start worshipping was yesterday. The second best time is now!",
+        "Action is the foundational key to all success. And praise!",
+        "Hard work beats talent when talent doesn't work hard. Especially if you're Kazuma.",
+        "Dream big and dare to fail. Then pray to Aqua for forgiveness!"
     ];
 
     const getStorage = (key) => {
@@ -531,7 +530,7 @@
         if (timerRunning) {
             clearInterval(timerInterval);
             timerRunning = false;
-            elements.startTimerBtn.textContent = 'Start';
+            elements.startTimerBtn.textContent = 'Begin';
         } else {
             timerRunning = true;
             elements.startTimerBtn.textContent = 'Pause';
@@ -542,7 +541,7 @@
                 } else {
                     clearInterval(timerInterval);
                     timerRunning = false;
-                    elements.startTimerBtn.textContent = 'Start';
+                    elements.startTimerBtn.textContent = 'Begin';
                     showFireworks();
                 }
             }, 1000);
@@ -552,7 +551,7 @@
     const resetTimer = () => {
         clearInterval(timerInterval);
         timerRunning = false;
-        elements.startTimerBtn.textContent = 'Start';
+        elements.startTimerBtn.textContent = 'Begin';
         setTimerDuration(25);
     };
 
