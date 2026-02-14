@@ -167,13 +167,28 @@
 
         const maxCount = Math.max(1, ...Object.values(streakData.weeklyHistory));
 
-        weeklyBars.innerHTML = days.map(day => {
+        weeklyBars.innerHTML = '';
+        days.forEach(day => {
             const count = streakData.weeklyHistory[day] || 0;
             const height = Math.max(4, (count / maxCount) * 80);
             const dayName = new Date(day).toLocaleDateString('en', { weekday: 'short' }).slice(0, 1);
             const isToday = day === getTodayKey();
-            return `<div class="bar-wrapper"><div class="bar-fill" style="height: ${height}px"></div><span class="bar-label ${isToday ? 'today' : ''}">${dayName}</span></div>`;
-        }).join('');
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'bar-wrapper';
+            
+            const fill = document.createElement('div');
+            fill.className = 'bar-fill';
+            fill.style.height = height + 'px';
+            
+            const label = document.createElement('span');
+            label.className = 'bar-label' + (isToday ? ' today' : '');
+            label.textContent = dayName;
+            
+            wrapper.appendChild(fill);
+            wrapper.appendChild(label);
+            weeklyBars.appendChild(wrapper);
+        });
     };
 
     const toggleProgressPanel = async () => {
@@ -189,24 +204,35 @@
         renderTodos(todos);
     };
 
-    const escapeHtml = (text) => {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    };
-
     const renderTodos = async (todos) => {
         const todoList = get('todoList');
         const questCount = get('questCount');
         if (!todoList) return;
 
-        todoList.innerHTML = todos.map((todo, index) => `
-            <li class="quest-item">
-                <div class="quest-checkbox" data-index="${index}"></div>
-                <span class="quest-text">${escapeHtml(todo.text)}</span>
-                <button class="quest-delete" data-index="${index}">&times;</button>
-            </li>
-        `).join('');
+        todoList.innerHTML = '';
+        
+        todos.forEach((todo, index) => {
+            const li = document.createElement('li');
+            li.className = 'quest-item';
+            
+            const checkbox = document.createElement('div');
+            checkbox.className = 'quest-checkbox';
+            checkbox.dataset.index = index;
+            
+            const span = document.createElement('span');
+            span.className = 'quest-text';
+            span.textContent = todo.text;
+            
+            const btn = document.createElement('button');
+            btn.className = 'quest-delete';
+            btn.dataset.index = index;
+            btn.textContent = '\u00D7';
+            
+            li.appendChild(checkbox);
+            li.appendChild(span);
+            li.appendChild(btn);
+            todoList.appendChild(li);
+        });
 
         const streakData = await getStreakData();
         if (questCount) questCount.textContent = streakData.totalCompleted;
