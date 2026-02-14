@@ -5,17 +5,16 @@
     --primary-light: #be2edd;
     --primary-dark: #7d3c98;
     --accent: #e056fd;
-    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --bg-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    --surface: rgba(255, 255, 255, 0.12);
-    --surface-hover: rgba(255, 255, 255, 0.18);
-    --surface-dark: rgba(30, 30, 50, 0.8);
-    --text: #ffffff;
-    --text-muted: rgba(255, 255, 255, 0.7);
-    --border: rgba(255, 255, 255, 0.1);
-    --success: #00d9a5;
-    --danger: #ff6b6b;
-    --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    --bg-light: #f5f5f7;
+    --bg-dark: #1a1a2e;
+    --surface: rgba(255, 255, 255, 0.85);
+    --surface-hover: rgba(255, 255, 255, 0.95);
+    --text: #1d1d1f;
+    --text-muted: #86868b;
+    --border: rgba(0, 0, 0, 0.1);
+    --success: #34c759;
+    --danger: #ff3b30;
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     --radius-sm: 8px;
     --radius-md: 16px;
     --radius-lg: 24px;
@@ -32,13 +31,42 @@
 html, body {
     height: 100%;
     font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg-gradient);
+    background: var(--bg-light);
     color: var(--text);
     overflow: hidden;
 }
 
 body.dark-mode {
     background: var(--bg-dark);
+}
+
+body.dark-mode .app-container {
+    background: rgba(30, 30, 30, 0.9);
+}
+
+body.dark-mode .surface {
+    background: rgba(50, 50, 50, 0.85);
+}
+
+body.dark-mode .quest-item,
+body.dark-mode .timer-box,
+body.dark-mode .quests-section {
+    background: rgba(50, 50, 50, 0.6);
+}
+
+body.dark-mode .add-quest-form input {
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+}
+
+body.dark-mode .quest-text {
+    color: white;
+}
+
+body.dark-mode .section-header h2,
+body.dark-mode .timer-display,
+body.dark-mode .preset-btn {
+    color: white;
 }
 
 .app-container {
@@ -49,6 +77,8 @@ body.dark-mode {
     flex-direction: column;
     padding: 24px;
     position: relative;
+    background: white;
+    border-radius: 0;
 }
 
 /* Header */
