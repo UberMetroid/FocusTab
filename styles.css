@@ -136,50 +136,35 @@ body.dark-mode .moon-icon { display: block; }
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 24px;
+    gap: 20px;
 }
 
-.timer-circle {
+.timer-box {
     position: relative;
-    width: 220px;
-    height: 220px;
+    width: 100%;
+    max-width: 320px;
+    padding: 32px 24px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(10px);
+    text-align: center;
 }
 
 .timer-ring {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-}
-
-.timer-ring-bg {
-    fill: none;
-    stroke: var(--surface);
-    stroke-width: 6;
-}
-
-.timer-ring-progress {
-    fill: none;
-    stroke: var(--success);
-    stroke-width: 6;
-    stroke-linecap: round;
-    stroke-dasharray: 565.48;
-    stroke-dashoffset: 565.48;
-    transition: stroke-dashoffset 1s linear;
+    display: none;
 }
 
 .timer-display {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 3.5rem;
+    font-size: 4rem;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     letter-spacing: -2px;
+    color: var(--text);
 }
 
 .timer-separator {
     animation: blink 1s infinite;
+    color: var(--text-muted);
 }
 
 @keyframes blink {
@@ -191,19 +176,21 @@ body.dark-mode .moon-icon { display: block; }
     flex-direction: column;
     align-items: center;
     gap: 16px;
+    margin-top: 16px;
 }
 
 .timer-btn-primary {
-    padding: 16px 48px;
-    font-size: 1.1rem;
+    padding: 14px 40px;
+    font-size: 1rem;
     font-weight: 600;
     border: none;
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-md);
     background: var(--success);
     color: #000;
     cursor: pointer;
     transition: var(--transition);
     box-shadow: 0 4px 20px rgba(0, 217, 165, 0.3);
+    width: 100%;
 }
 
 .timer-btn-primary:hover {
@@ -217,6 +204,8 @@ body.dark-mode .moon-icon { display: block; }
 
 .timer-presets {
     display: flex;
+    gap: 8px;
+}
     gap: 8px;
 }
 
@@ -480,6 +469,12 @@ body.dark-mode .moon-icon { display: block; }
     margin-top: auto;
 }
 
+.footer-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
 .stats-btn {
     display: flex;
     align-items: center;
@@ -489,7 +484,7 @@ body.dark-mode .moon-icon { display: block; }
     font-family: inherit;
     font-weight: 500;
     border: 1px solid var(--border);
-    border-radius: var(--radius-full);
+    border-radius: var(--radius-md);
     background: transparent;
     color: var(--text-muted);
     cursor: pointer;
@@ -501,12 +496,25 @@ body.dark-mode .moon-icon { display: block; }
     color: var(--text);
 }
 
-.quote-text {
+.weather-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 0.8rem;
     color: var(--text-muted);
-    font-style: italic;
-    max-width: 60%;
-    text-align: right;
+}
+
+.github-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.github-link:hover {
+    color: var(--text);
+    transform: scale(1.1);
 }
 
 /* Stats Panel */
