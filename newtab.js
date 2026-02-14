@@ -3,8 +3,19 @@
 
     const STORAGE_KEYS = {
         DAILY_FOCUS: 'dailyFocus',
-        DARK_MODE: 'darkMode'
+        DARK_MODE: 'darkMode',
+        STREAK_DATA: 'streakData',
+        BACKGROUND: 'background'
     };
+
+    const BACKGROUND_PRESETS = [
+        { id: 'default', name: 'Default', gradient: 'linear-gradient(135deg, #fafafa 0%, #f7b731 100%)' },
+        { id: 'sunset', name: 'Sunset', gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)' },
+        { id: 'ocean', name: 'Ocean', gradient: 'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)' },
+        { id: 'forest', name: 'Forest', gradient: 'linear-gradient(135deg, #134e5e 0%, #71b280 100%)' },
+        { id: 'purple', name: 'Purple Dream', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' },
+        { id: 'pink', name: 'Sakura', gradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)' }
+    ];
 
     const elements = {
         darkModeToggle: document.getElementById('darkModeToggle'),
@@ -16,7 +27,39 @@
         completeFocusButton: document.getElementById('completeFocusButton'),
         fireworks: document.getElementById('fireworks'),
         inputError: document.getElementById('inputError'),
-        dailyQuote: document.getElementById('dailyQuote')
+        dailyQuote: document.getElementById('dailyQuote'),
+        progressPanel: document.getElementById('progressPanel'),
+        streakCount: document.getElementById('streakCount'),
+        longestStreak: document.getElementById('longestStreak'),
+        totalCompleted: document.getElementById('totalCompleted'),
+        weeklyBars: document.getElementById('weeklyBars'),
+        closeProgressPanel: document.getElementById('closeProgressPanel'),
+        backgroundPresets: document.getElementById('backgroundPresets')
+    };
+
+    const getTodayKey = () => new Date().toISOString().split('T')[0];
+
+    const getYesterdayKey = () => {
+        const d = new Date();
+        d.setDate(d.getDate() - 1);
+        return d.toISOString().split('T')[0];
+    };
+
+    const getDefaultStreakData = () => ({
+        current: 0,
+        longest: 0,
+        lastCompleted: null,
+        weeklyHistory: {},
+        totalCompleted: 0
+    });
+
+    const getStreakData = async () => {
+        const data = await getStorage(STORAGE_KEYS.STREAK_DATA);
+        return data || getDefaultStreakData();
+    };
+
+    const saveStreakData = async (data) => {
+        await setStorage(STORAGE_KEYS.STREAK_DATA, data);
     };
 
     const QUOTES = [
@@ -151,11 +194,83 @@
     const completeFocus = async () => {
         try {
             await setStorage(STORAGE_KEYS.DAILY_FOCUS, '');
+            await updateProgress();
             showSetFocusArea();
             showFireworks();
         } catch (error) {
             console.error('Error clearing focus:', error);
             showError('Failed to complete focus. Please try again.');
+        }
+    };
+
+    const updateProgress = async () => {
+        const streakData = await getStreakData();
+        const today = getTodayKey();
+        const yesterday = getYesterdayKey();
+
+        if (streakData.lastCompleted === today) {
+            return;
+        }
+
+        if (streakData.lastCompleted === yesterday) {
+            streakData.current += 1;
+        } else {
+            streakData.current = 1;
+        }
+
+        if (streakData.current > streakData.longest) {
+            streakData.longest = streakData.current;
+        }
+
+        streakData.lastCompleted = today;
+        streakData.totalCompleted += 1;
+
+        streakData.weeklyHistory[today] = (streakData.weeklyHistory[today] || 0) + 1;
+
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        Object.keys(streakData.weeklyHistory).forEach(key => {
+            if (new Date(key) < sevenDaysAgo) {
+                delete streakData.weeklyHistory[key];
+            }
+        });
+
+        await saveStreakData(streakData);
+    };
+
+    const renderProgress = async () => {
+        const streakData = await getStreakData();
+        elements.streakCount.textContent = streakData.current;
+        elements.longestStreak.textContent = streakData.longest;
+        elements.totalCompleted.textContent = streakData.totalCompleted;
+
+        const days = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            days.push(d.toISOString().split('T')[0]);
+        }
+
+        const maxCount = Math.max(1, ...Object.values(streakData.weeklyHistory));
+
+        elements.weeklyBars.innerHTML = days.map(day => {
+            const count = streakData.weeklyHistory[day] || 0;
+            const height = Math.max(10, (count / maxCount) * 100);
+            const dayName = new Date(day).toLocaleDateString('en', { weekday: 'short' });
+            const isToday = day === getTodayKey();
+            return `<div class="week-bar-container">
+                <div class="week-bar" style="height: ${height}%" title="${count} completed"></div>
+                <span class="week-day${isToday ? ' today' : ''}">${dayName}</span>
+            </div>`;
+        }).join('');
+    };
+
+    const toggleProgressPanel = async () => {
+        const isVisible = elements.progressPanel.style.display === 'block';
+        elements.progressPanel.style.display = isVisible ? 'none' : 'block';
+        if (!isVisible) {
+            await renderProgress();
+            await renderBackgroundSelector();
         }
     };
 
@@ -187,6 +302,88 @@
         }
     };
 
+    const applyBackground = (background) => {
+        if (background.type === 'custom' && background.image) {
+            document.body.style.background = `url(${background.image}) center/cover no-repeat fixed`;
+        } else {
+            const preset = BACKGROUND_PRESETS.find(p => p.id === background.preset) || BACKGROUND_PRESETS[0];
+            document.body.style.background = preset.gradient;
+        }
+    };
+
+    const initializeBackground = async () => {
+        try {
+            const background = await getStorage(STORAGE_KEYS.BACKGROUND);
+            if (background) {
+                applyBackground(background);
+            }
+        } catch (error) {
+            console.error('Error loading background preference:', error);
+        }
+    };
+
+    const setBackground = async (background) => {
+        try {
+            await setStorage(STORAGE_KEYS.BACKGROUND, background);
+            applyBackground(background);
+        } catch (error) {
+            console.error('Error saving background preference:', error);
+        }
+    };
+
+    const handleImageUpload = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            showError('Please select an image file');
+            return;
+        }
+
+        if (file.size > 2 * 1024 * 1024) {
+            showError('Image must be under 2MB');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            await setBackground({ type: 'custom', image: e.target.result });
+            renderBackgroundSelector();
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const renderBackgroundSelector = async () => {
+        const container = elements.backgroundPresets;
+        if (!container) return;
+
+        const current = await getStorage(STORAGE_KEYS.BACKGROUND) || { preset: 'default', type: 'preset' };
+
+        container.innerHTML = BACKGROUND_PRESETS.map(preset => `
+            <button class="preset-btn ${current.type === 'preset' && current.preset === preset.id ? 'active' : ''}"
+                    data-preset="${preset.id}"
+                    style="background: ${preset.gradient}"
+                    title="${preset.name}"></button>
+        `).join('') + `
+            <label class="upload-btn" title="Upload custom image">
+                <input type="file" id="bgUpload" accept="image/*" style="display: none;">
+                <span>+</span>
+            </label>
+        `;
+
+        container.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                await setBackground({ type: 'preset', preset: btn.dataset.preset });
+                renderBackgroundSelector();
+            });
+        });
+
+        const uploadInput = document.getElementById('bgUpload');
+        if (uploadInput) {
+            uploadInput.addEventListener('change', handleImageUpload);
+        }
+    };
+
     const initializeFocus = async () => {
         try {
             const dailyFocus = await getStorage(STORAGE_KEYS.DAILY_FOCUS);
@@ -210,6 +407,13 @@
 
     const setupEventListeners = () => {
         let darkModeDebounceTimer;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'P') {
+                e.preventDefault();
+                toggleProgressPanel();
+            }
+        });
 
         elements.darkModeToggle.addEventListener('change', () => {
             clearTimeout(darkModeDebounceTimer);
@@ -240,11 +444,18 @@
                 completeFocus();
             }
         });
+
+        if (elements.closeProgressPanel) {
+            elements.closeProgressPanel.addEventListener('click', () => {
+                elements.progressPanel.style.display = 'none';
+            });
+        }
     };
 
     const init = () => {
         setupEventListeners();
         initializeDarkMode();
+        initializeBackground();
         initializeFocus();
         showRandomQuote();
     };
