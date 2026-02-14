@@ -1,152 +1,208 @@
+(function() {
+    'use strict';
 
-document.addEventListener('DOMContentLoaded', () => {
-    // --- DOM Element References ---
-    let darkModeDebounceTimer;
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    const setFocusArea = document.getElementById('setFocusArea');
-    const activeFocusArea = document.getElementById('activeFocusArea');
-    const setFocusButton = document.getElementById('setFocusButton');
-    const newFocusInput = document.getElementById('newFocusInput');
-    const focusText = document.getElementById('focusText');
-    const completeFocusButton = document.getElementById('completeFocusButton');
-    const fireworks = document.getElementById('fireworks');
-
-    // --- Helper Functions ---
-    const showFireworks = () => {
-        fireworks.style.display = 'block';
-        setTimeout(() => {
-            fireworks.style.display = 'none';
-        }, 3000);
+    const STORAGE_KEYS = {
+        DAILY_FOCUS: 'dailyFocus',
+        DARK_MODE: 'darkMode'
     };
 
-    const showSetFocusArea = () => {
-        setFocusArea.style.display = 'block';
-        activeFocusArea.style.display = 'none';
-        newFocusInput.value = '';
-        newFocusInput.focus();
+    const elements = {
+        darkModeToggle: document.getElementById('darkModeToggle'),
+        setFocusArea: document.getElementById('setFocusArea'),
+        activeFocusArea: document.getElementById('activeFocusArea'),
+        setFocusButton: document.getElementById('setFocusButton'),
+        newFocusInput: document.getElementById('newFocusInput'),
+        focusText: document.getElementById('focusText'),
+        completeFocusButton: document.getElementById('completeFocusButton'),
+        fireworks: document.getElementById('fireworks'),
+        inputError: document.getElementById('inputError')
     };
 
-    const showActiveFocusArea = (focus) => {
-        setFocusArea.style.display = 'none';
-        activeFocusArea.style.display = 'flex';
-        focusText.textContent = `Focus with all your power! ${focus}`;
-    };
-
-    // --- Storage Functions ---
-    const getFromStorage = (key) => {
-        return new Promise((resolve, reject) => {
-            try {
-                const storage = browser?.storage || chrome.storage;
+    const getStorage = (key) => {
+        return new Promise((resolve) => {
+            const storage = window.browser?.storage || window.chrome.storage;
+            if (storage) {
                 storage.local.get(key, (data) => {
-                    const error = browser?.runtime?.lastError || chrome.runtime?.lastError;
+                    const error = window.browser?.runtime?.lastError || window.chrome.runtime?.lastError;
                     if (error) {
-                        reject(error);
+                        console.warn('Storage error, falling back to localStorage:', error);
+                        resolve(localStorage.getItem(key));
                     } else {
                         resolve(data[key]);
                     }
                 });
-            } catch (e) {
+            } else {
                 resolve(localStorage.getItem(key));
             }
         });
     };
 
-    const setToStorage = (key, value) => {
-        return new Promise((resolve, reject) => {
-            try {
-                const storage = browser?.storage || chrome.storage;
+    const setStorage = (key, value) => {
+        return new Promise((resolve) => {
+            const storage = window.browser?.storage || window.chrome.storage;
+            if (storage) {
                 storage.local.set({ [key]: value }, () => {
-                    const error = browser?.runtime?.lastError || chrome.runtime?.lastError;
+                    const error = window.browser?.runtime?.lastError || window.chrome.runtime?.lastError;
                     if (error) {
-                        reject(error);
-                    } else {
-                        resolve();
+                        console.warn('Storage error, falling back to localStorage:', error);
+                        localStorage.setItem(key, value);
                     }
+                    resolve();
                 });
-            } catch (e) {
+            } else {
                 localStorage.setItem(key, value);
                 resolve();
             }
         });
     };
 
-    const updateFocusDisplay = async () => {
+    const showError = (message) => {
+        elements.inputError.textContent = message;
+        elements.inputError.style.display = 'block';
+        setTimeout(() => {
+            elements.inputError.style.display = 'none';
+            elements.inputError.textContent = '';
+        }, 3000);
+    };
+
+    const clearError = () => {
+        elements.inputError.textContent = '';
+        elements.inputError.style.display = 'none';
+    };
+
+    const showFireworks = () => {
+        elements.fireworks.style.display = 'block';
+        elements.fireworks.setAttribute('aria-hidden', 'false');
+        setTimeout(() => {
+            elements.fireworks.style.display = 'none';
+            elements.fireworks.setAttribute('aria-hidden', 'true');
+        }, 3000);
+    };
+
+    const showSetFocusArea = () => {
+        elements.setFocusArea.style.display = 'block';
+        elements.activeFocusArea.style.display = 'none';
+        elements.newFocusInput.value = '';
+        elements.newFocusInput.focus();
+        clearError();
+    };
+
+    const showActiveFocusArea = (focus) => {
+        elements.setFocusArea.style.display = 'none';
+        elements.activeFocusArea.style.display = 'flex';
+        elements.focusText.textContent = `Focus with all your power! ${focus}`;
+    };
+
+    const saveFocus = async () => {
+        const focus = elements.newFocusInput.value.trim();
+        
+        if (!focus) {
+            showError('Please enter a focus task');
+            elements.newFocusInput.focus();
+            return false;
+        }
+
+        if (focus.length > 200) {
+            showError('Focus task is too long (max 200 characters)');
+            return false;
+        }
+
         try {
-            const dailyFocus = await getFromStorage('dailyFocus');
-            if (dailyFocus) {
+            await setStorage(STORAGE_KEYS.DAILY_FOCUS, focus);
+            showActiveFocusArea(focus);
+            return true;
+        } catch (error) {
+            console.error('Error saving focus:', error);
+            showError('Failed to save focus. Please try again.');
+            return false;
+        }
+    };
+
+    const completeFocus = async () => {
+        try {
+            await setStorage(STORAGE_KEYS.DAILY_FOCUS, '');
+            showSetFocusArea();
+            showFireworks();
+        } catch (error) {
+            console.error('Error clearing focus:', error);
+            showError('Failed to complete focus. Please try again.');
+        }
+    };
+
+    const toggleDarkMode = async (isDarkMode) => {
+        document.body.classList.toggle('dark-mode', isDarkMode);
+        try {
+            await setStorage(STORAGE_KEYS.DARK_MODE, isDarkMode);
+        } catch (error) {
+            console.error('Error saving dark mode preference:', error);
+        }
+    };
+
+    const initializeDarkMode = async () => {
+        try {
+            const darkMode = await getStorage(STORAGE_KEYS.DARK_MODE);
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                elements.darkModeToggle.checked = true;
+            }
+        } catch (error) {
+            console.error('Error loading dark mode preference:', error);
+        }
+    };
+
+    const initializeFocus = async () => {
+        try {
+            const dailyFocus = await getStorage(STORAGE_KEYS.DAILY_FOCUS);
+            if (dailyFocus && dailyFocus.trim()) {
                 showActiveFocusArea(dailyFocus);
             } else {
                 showSetFocusArea();
             }
         } catch (error) {
-            console.error("Error getting focus from storage:", error);
+            console.error('Error loading focus:', error);
             showSetFocusArea();
         }
     };
 
-    // --- Event Listeners ---
-    // Dark Mode Toggle
-    darkModeToggle.addEventListener('change', async () => {
-        clearTimeout(darkModeDebounceTimer);
-        darkModeDebounceTimer = setTimeout(async () => {
-            const isDarkMode = darkModeToggle.checked;
-            document.body.classList.toggle('dark-mode', isDarkMode);
-            try {
-                await setToStorage('darkMode', isDarkMode);
-            } catch (error) {
-                console.error("Error saving dark mode preference:", error);
+    const setupEventListeners = () => {
+        let darkModeDebounceTimer;
+
+        elements.darkModeToggle.addEventListener('change', () => {
+            clearTimeout(darkModeDebounceTimer);
+            darkModeDebounceTimer = setTimeout(() => {
+                toggleDarkMode(elements.darkModeToggle.checked);
+            }, 150);
+        });
+
+        elements.setFocusButton.addEventListener('click', () => {
+            saveFocus();
+        });
+
+        elements.newFocusInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                saveFocus();
             }
-        }, 300);
-    });
+        });
 
-    // Set Focus Button Click
-    setFocusButton.addEventListener('click', async () => {
-        const focus = newFocusInput.value.trim();
-        if (focus) {
-            try {
-                await setToStorage('dailyFocus', focus);
-                await updateFocusDisplay();
-            } catch (error) {
-                console.error("Error saving focus:", error);
-            }
-        }
-    });
+        elements.newFocusInput.addEventListener('input', () => {
+            clearError();
+        });
 
-    // Handle Enter Key in Input
-    newFocusInput.addEventListener('keypress', async (event) => {
-        if (event.key === 'Enter') {
-            const focus = newFocusInput.value.trim();
-            if (focus) {
-                try {
-                    await setToStorage('dailyFocus', focus);
-                    await updateFocusDisplay();
-                } catch (error) {
-                    console.error("Error saving focus:", error);
-                }
-            }
-        }
-    });
+        elements.completeFocusButton.addEventListener('click', () => {
+            completeFocus();
+        });
+    };
 
-    // Complete Focus Button Click
-    completeFocusButton.addEventListener('click', async () => {
-        try {
-            await setToStorage('dailyFocus', '');
-            await updateFocusDisplay();
-            showFireworks();
-        } catch (error) {
-            console.error("Error clearing focus:", error);
-        }
-    });
+    const init = () => {
+        setupEventListeners();
+        initializeDarkMode();
+        initializeFocus();
+    };
 
-    // --- Initialization ---
-    getFromStorage('darkMode')
-        .then(darkMode => {
-            if (darkMode) {
-                document.body.classList.add('dark-mode');
-                darkModeToggle.checked = true;
-            }
-        })
-        .catch(error => console.error("Error loading dark mode preference:", error));
-
-    updateFocusDisplay();
-});
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
