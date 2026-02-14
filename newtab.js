@@ -123,12 +123,12 @@
         const today = getTodayKey();
         const yesterday = getYesterdayKey();
 
-        if (streakData.lastCompleted === today) return;
-
-        if (streakData.lastCompleted === yesterday) {
+        if (streakData.lastCompleted !== today && streakData.lastCompleted !== yesterday) {
+            streakData.current = 1;
+        } else if (streakData.lastCompleted === yesterday) {
             streakData.current += 1;
         } else {
-            streakData.current = 1;
+            streakData.current += 1;
         }
 
         if (streakData.current > streakData.longest) streakData.longest = streakData.current;
