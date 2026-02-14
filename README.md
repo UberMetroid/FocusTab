@@ -56,7 +56,7 @@ Transform your new tab page into a focused productivity powerhouse with **FocusT
 
 ### Hidden Features
 
-- **Progress Panel:** Press `Ctrl+Shift+P` to view your streak stats and weekly chart
+- **Progress Panel:** Press `Ctrl+Shift+S` to view your streak stats and weekly chart
 - **Background Customization:** In the progress panel, select gradient presets or upload your own image (max 2MB)
 
 ## 🔧 Troubleshooting

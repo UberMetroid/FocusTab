@@ -454,7 +454,7 @@
         let darkModeDebounceTimer;
 
         document.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.shiftKey && e.key === 'P') {
+            if (e.ctrlKey && e.shiftKey && e.key === 'S') {
                 e.preventDefault();
                 toggleProgressPanel();
             }
