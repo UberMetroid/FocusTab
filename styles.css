@@ -344,6 +344,22 @@ input:checked + .slider:before {
     animation: float 3s ease-in-out infinite;
 }
 
+.quote-text {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    font-style: italic;
+    margin-top: 20px;
+    opacity: 0.85;
+    max-width: 90%;
+    line-height: 1.5;
+    font-family: var(--font-family-secondary);
+}
+
+body.dark-mode .quote-text {
+    color: var(--text-dark);
+    opacity: 0.8;
+}
+
 @keyframes float {
     0%, 100% { transform: translateY(0) rotate(-1deg); }
     50% { transform: translateY(-10px) rotate(1deg); }

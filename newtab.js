@@ -15,8 +15,32 @@
         focusText: document.getElementById('focusText'),
         completeFocusButton: document.getElementById('completeFocusButton'),
         fireworks: document.getElementById('fireworks'),
-        inputError: document.getElementById('inputError')
+        inputError: document.getElementById('inputError'),
+        dailyQuote: document.getElementById('dailyQuote')
     };
+
+    const QUOTES = [
+        "The only way to do great work is to love what you do. - Steve Jobs",
+        "Focus on being productive instead of busy. - Tim Ferriss",
+        "Success is the sum of small efforts, repeated day in and day out. - Robert Collier",
+        "Don't watch the clock; do what it does. Keep going. - Sam Levenson",
+        "The secret of getting ahead is getting started. - Mark Twain",
+        "It does not matter how slowly you go as long as you do not stop. - Confucius",
+        "Believe you can and you're halfway there. - Theodore Roosevelt",
+        "Your focus determines your reality. - George Lucas",
+        "Star Wars",
+        "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
+        "Hakuna Matata! - The Lion King",
+        "Just do it! - Nike",
+        "I will be the change that I wish to see in the world. - Gandhi",
+        "May the Force be with you. - Star Wars",
+        "With great power comes great responsibility. - Spider-Man",
+        "A journey of a thousand miles begins with a single step. - Lao Tzu",
+        "The best time to plant a tree was 20 years ago. The second best time is now. - Chinese Proverb",
+        "Action is the foundational key to all success. - Pablo Picasso",
+        "Hard work beats talent when talent doesn't work hard. - Tim Notke",
+        "Dream big and dare to fail. - Norman Vaughan"
+    ];
 
     const getStorage = (key) => {
         return new Promise((resolve) => {
@@ -84,6 +108,7 @@
         elements.activeFocusArea.style.display = 'none';
         elements.newFocusInput.value = '';
         elements.newFocusInput.focus();
+        elements.completeFocusButton.textContent = 'Complete';
         clearError();
     };
 
@@ -96,12 +121,6 @@
     const saveFocus = async () => {
         const focus = elements.newFocusInput.value.trim();
         
-        if (!focus) {
-            showError('Please enter a focus task');
-            elements.newFocusInput.focus();
-            return false;
-        }
-
         if (focus.length > 200) {
             showError('Focus task is too long (max 200 characters)');
             return false;
@@ -109,13 +128,24 @@
 
         try {
             await setStorage(STORAGE_KEYS.DAILY_FOCUS, focus);
-            showActiveFocusArea(focus);
+            if (focus) {
+                showActiveFocusArea(focus);
+            } else {
+                showRestDayArea();
+            }
             return true;
         } catch (error) {
             console.error('Error saving focus:', error);
             showError('Failed to save focus. Please try again.');
             return false;
         }
+    };
+
+    const showRestDayArea = () => {
+        elements.setFocusArea.style.display = 'none';
+        elements.activeFocusArea.style.display = 'flex';
+        elements.focusText.textContent = 'Take a rest, senpai! You deserve it.';
+        elements.completeFocusButton.textContent = 'Set Focus';
     };
 
     const completeFocus = async () => {
@@ -127,6 +157,13 @@
             console.error('Error clearing focus:', error);
             showError('Failed to complete focus. Please try again.');
         }
+    };
+
+    const setFocusFromRest = () => {
+        elements.setFocusArea.style.display = 'block';
+        elements.activeFocusArea.style.display = 'none';
+        elements.newFocusInput.value = '';
+        elements.newFocusInput.focus();
     };
 
     const toggleDarkMode = async (isDarkMode) => {
@@ -155,6 +192,8 @@
             const dailyFocus = await getStorage(STORAGE_KEYS.DAILY_FOCUS);
             if (dailyFocus && dailyFocus.trim()) {
                 showActiveFocusArea(dailyFocus);
+            } else if (dailyFocus === '') {
+                showRestDayArea();
             } else {
                 showSetFocusArea();
             }
@@ -162,6 +201,11 @@
             console.error('Error loading focus:', error);
             showSetFocusArea();
         }
+    };
+
+    const showRandomQuote = () => {
+        const randomIndex = Math.floor(Math.random() * QUOTES.length);
+        elements.dailyQuote.textContent = QUOTES[randomIndex];
     };
 
     const setupEventListeners = () => {
@@ -190,7 +234,11 @@
         });
 
         elements.completeFocusButton.addEventListener('click', () => {
-            completeFocus();
+            if (elements.completeFocusButton.textContent === 'Set Focus') {
+                setFocusFromRest();
+            } else {
+                completeFocus();
+            }
         });
     };
 
@@ -198,6 +246,7 @@
         setupEventListeners();
         initializeDarkMode();
         initializeFocus();
+        showRandomQuote();
     };
 
     if (document.readyState === 'loading') {

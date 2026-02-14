@@ -1,74 +1,137 @@
 # FocusTab: Unleash Your Focus Power! ⚡️
 
-Transform your new tab page into a focused productivity powerhouse with **FocusTab**! This minimalist Chrome extension helps you eliminate distractions and concentrate on your most important daily task.
+Transform your new tab page into a focused productivity powerhouse with **FocusTab**! This minimalist Chrome/Chromium extension helps you eliminate distractions and concentrate on your most important daily task.
 
-## ✨ Features:
+## ✨ Features
 
-*   **Single Daily Focus:** Set one primary goal for the day to maintain laser-like focus.
-*   **Anime-Inspired Design:** A visually engaging and motivating interface with subtle animations.  Get encouraged by your own digital *senpai*!
-*   **Dark Mode Support:** Switch between light and dark themes for comfortable viewing in any environment.
-*   **Persistent Focus:** Your focus is saved across sessions, so you're always reminded of your goal.
-*   **Celebratory Fireworks:** Complete your task and get a visual reward!
-*   **GitHub Link:** Quick access to the project's repository for contributions and updates.
-*    **Chrome Storage:** Uses Chrome storage for persistence.
-*    **Promises for asychronous operations**: Asynchronous JavaScript code.
+- **Single Daily Focus:** Set one primary goal for the day to maintain laser-like focus.
+- **Rest Days:** Optionally leave your focus empty for a well-deserved rest day.
+- **Daily Quotes:** Rotating motivational quotes to keep you inspired.
+- **Anime-Inspired Design:** A visually engaging interface with subtle animations.
+- **Dark Mode:** Toggle between light and dark themes for comfortable viewing.
+- **Persistent Storage:** Your focus and preferences are saved across sessions.
+- **Celebratory Fireworks:** Visual reward when you complete your task!
 
-## 🚀 Usage:
+## 🚀 Installation
 
-1.  **Installation:**
-    *   Clone this repository: `git clone https://github.com/SurvivaLlama/FocusTab.git`
-    *   Open Chrome and go to `chrome://extensions/`.
-    *   Enable "Developer mode" (usually a toggle in the top right corner).
-    *   Click "Load unpacked".
-    *   Select the cloned `FocusTab` directory.
+### Chrome / Chromium (Sideloading)
 
-2.  **Setting Your Focus:**
-    *   Open a new tab.
-    *   You'll be greeted with: "What should you focus on, senpai?"
-    *   Enter your focus task in the input field.
-    *   Press Enter or click the "Set Focus" button.
+1. Clone or download this repository:
+   ```bash
+   git clone https://github.com/UberMetroid/FocusTab.git
+   ```
+   Or click "Code" → "Download ZIP" on GitHub.
 
-3.  **Staying Focused:**
-    *   Each new tab will now display: "Focus with all your power! *[Your Focus]*"
+2. Open Chrome and navigate to `chrome://extensions/`
 
-4.  **Completing Your Focus:**
-    *   Click the "Complete" button.
-    *   Enjoy the celebratory fireworks! 🎉
-    *   The focus will be cleared, ready for your next task.
+3. Enable **Developer mode** (toggle in the top-right corner)
 
-5.  **Dark Mode:** Use the toggle switch in the top right corner to switch between light and dark mode.
+4. Click **Load unpacked**
 
-## 💻 Technologies Used:
+5. Select the `FocusTab` directory (the folder containing `manifest.json`)
 
-*   HTML
-*   CSS (with CSS Variables for theming)
-*   JavaScript (with Promises and `async/await` for asynchronous operations)
-*   Chrome Storage API
+### Other Browsers
 
-## 🤝 How to Contribute:
+- **Edge:** Use the same sideloading process at `edge://extensions/`
+- **Brave:** Use the same sideloading process at `brave://extensions/`
+- **Firefox:** See [临时扩展支持](https://extensionworkshop.com/?utm_source=devwebsite&utm_medium=website&utm_campaign=devoverview) for temporary installation, or convert using [web-ext](https://extensionworkshop.com/?utm_source=devwebsite&utm_medium=website&utm_campaign=devoverview)
 
-We welcome contributions!  Here's how you can help:
+## 📖 Quick Start
 
-1.  **Fork** the repository.
-2.  **Clone** your forked repository: `git clone https://github.com/<your-username>/FocusTab.git`
-3.  Create a new branch for your feature: `git checkout -b feature/my-awesome-feature`
-4.  Make your changes and commit them: `git commit -m "Add my awesome feature"`
-5.  Push to your branch: `git push origin feature/my-awesome-feature`
-6.  Create a **Pull Request** from your branch to the `main` branch of this repository.
+1. **Open a new tab** — You'll see "What should you focus on, senpai?"
 
-Please follow good coding practices, write clear commit messages, and be respectful in your interactions.
+2. **Enter your focus** — Type your main task for the day and press Enter (or click "Set Focus")
 
-## 🐞 Issues and Bug Reports:
+3. **Stay focused** — Each new tab shows your focus with motivational text
 
-Found a bug?  Have a suggestion?  Please open an issue on the [GitHub Issues](https://github.com/SurvivaLlama/FocusTab/issues) page.
+4. **Complete your task** — Click "Complete" to celebrate with fireworks!
 
-## 📜 License:
+5. **Rest when needed** — Leave the input empty to set a rest day
 
-This project is open source and available under the [MIT License](LICENSE) (You'll need to create a `LICENSE` file and add the MIT License text to it).
+## 🔧 Troubleshooting
 
-## 🔗 Links:
+### Focus not saving
+- Ensure you're using Chrome/Chromium with extension support
+- Try reloading the extension: Go to `chrome://extensions/` → click the reload icon on FocusTab
+- Check if "Site can save data" is allowed in extension details
 
-*   **GitHub Repository:** [https://github.com/SurvivaLlama/FocusTab](https://github.com/SurvivaLlama/FocusTab)
+### Dark mode toggle not working
+- Make sure the toggle is clicked firmly (there's a 150ms debounce)
+- Refresh the extension as above
+
+### Storage sync issues
+- FocusTab uses local Chrome storage by default
+- If using browser sync, ensure sync is enabled in Chrome settings
+- Data persists locally even without sync
+
+### Extension not loading after update
+- Chrome may disable extensions from unknown developers
+- Re-enable in `chrome://extensions/` if you see a warning
+- Try removing and re-adding the extension
+
+### New tab not showing FocusTab
+- Check that FocusTab is enabled in `chrome://extensions/`
+- Ensure no other extension is overriding new tab pages
+- Try setting FocusTab as your default in Chrome settings
+
+## 🤝 Contributing
+
+We welcome contributions! Here's how to help:
+
+### Development Setup
+
+```bash
+# Fork the repository on GitHub
+# Clone your fork
+git clone https://github.com/<your-username>/FocusTab.git
+cd FocusTab
+
+# Create a feature branch
+git checkout -b feature/your-feature-name
+```
+
+### Making Changes
+
+1. Make your changes in a new branch
+2. Test locally by loading the unpacked extension
+3. Follow the existing code style:
+   - Use ES6+ with async/await
+   - CSS variables for theming
+   - Semantic HTML
+4. Commit with clear, descriptive messages
+
+### Submitting Changes
+
+1. Push to your fork: `git push origin feature/your-feature-name`
+2. Open a Pull Request against the `main` branch
+3. Describe your changes and why they're needed
+4. Wait for review — we appreciate all contributions!
+
+### Coding Standards
+
+- Use 4 spaces for indentation
+- Add comments for complex logic
+- Test in both light and dark modes
+- Ensure accessibility (keyboard navigation, screen reader support)
+
+## 🐞 Issues and Support
+
+- **Found a bug?** Open an issue on [GitHub Issues](https://github.com/UberMetroid/FocusTab/issues)
+- **Have a suggestion?** We'd love to hear it! Open a feature request
+- **Need help?** Check the troubleshooting section above or open an issue
+
+## 📋 Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for version history and migration notes.
+
+## 📜 License
+
+This project is open source under the [MIT License](./LICENSE).
+
+## 🔗 Links
+
+- **GitHub Repository:** [https://github.com/UberMetroid/FocusTab](https://github.com/UberMetroid/FocusTab)
+- **Report Issues:** [https://github.com/UberMetroid/FocusTab/issues](https://github.com/UberMetroid/FocusTab/issues)
 
 ---
 

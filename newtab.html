@@ -37,11 +37,13 @@
             <div id="setFocusArea">
                 <p class="anime-text">What should you focus on, senpai?</p>
                 <label for="newFocusInput" class="sr-only">Enter your focus</label>
-                <input type="text" id="newFocusInput" placeholder="Enter your focus" aria-describedby="focusInputDescription">
-                <p id="focusInputDescription" class="sr-only">Type your focus task and press Enter or click Set Focus.</p>
+                <input type="text" id="newFocusInput" placeholder="Enter your focus (or leave empty for a rest day)" aria-describedby="focusInputDescription">
+                <p id="focusInputDescription" class="sr-only">Type your focus task and press Enter or click Set Focus. Leave empty and press Enter for a rest day.</p>
                 <button id="setFocusButton">Set Focus</button>
                 <p id="inputError" class="error-message" role="alert" aria-live="assertive"></p>
             </div>
+
+            <p id="dailyQuote" class="quote-text" aria-live="polite"></p>
         </section>
     </main>
 
