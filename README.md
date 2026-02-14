@@ -1,5 +1,9 @@
 # FocusTab: Unleash Your Focus Power! ⚡️
 
+[![License](https://img.shields.io/github/license/UberMetroid/FocusTab)](LICENSE)
+[![GitHub last commit](https://img.shields.io/github/last-commit/UberMetroid/FocusTab)](https://github.com/UberMetroid/FocusTab/commits/main)
+[![Repo stars](https://img.shields.io/github/stars/UberMetroid/FocusTab?style=social)](https://github.com/UberMetroid/FocusTab)
+
 Transform your new tab page into a focused productivity powerhouse with **FocusTab**! This minimalist Chrome/Chromium extension helps you eliminate distractions and concentrate on your most important daily task.
 
 ## ✨ Features
