@@ -6,7 +6,13 @@
         STREAK_DATA: 'streakData',
         TODOS: 'todos',
         QUICK_LINKS: 'quickLinks',
-        TIMER_MINUTES: 'timerMinutes'
+        TIMER_MINUTES: 'timerMinutes',
+        MAX_QUESTS: 'maxQuests',
+        DEFAULT_TIMER: 'defaultTimerMinutes',
+        THEME: 'themePreference',
+        BACKGROUND: 'backgroundPreference',
+        ENABLE_SOUND: 'enableSound',
+        ENABLE_ANIMATIONS: 'enableAnimations'
     };
 
     const getSeasonalGradient = () => {
@@ -30,7 +36,11 @@
         { id: 'pink', name: 'Sakura', gradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)' }
     ];
 
-    const get = (id) => document.getElementById(id);
+    const get = (id) => {
+        const element = document.getElementById(id);
+        if (!element) console.warn(`Element with ID '${id}' not found`);
+        return element;
+    };
 
     let timerInterval = null;
     let timerSecondsRemaining = 25 * 60;
@@ -73,11 +83,17 @@
 
     const getStorage = (key) => {
         return new Promise((resolve) => {
-            const storage = window.browser?.storage || window.chrome.storage;
-            if (storage) {
-                storage.local.get(key, (data) => {
-                    const error = window.browser?.runtime?.lastError || window.chrome.runtime?.lastError;
-                    resolve(error ? localStorage.getItem(key) : data[key]);
+            if (typeof browser !== 'undefined' && browser.storage && browser.storage.local) {
+                browser.storage.local.get(key).then((data) => {
+                    if (data[key] === undefined) {
+                        console.warn(`Storage key '${key}' not found, falling back to localStorage`);
+                        resolve(localStorage.getItem(key));
+                    } else {
+                        resolve(data[key]);
+                    }
+                }).catch((error) => {
+                    console.error(`Storage get error for key '${key}':`, error);
+                    resolve(localStorage.getItem(key));
                 });
             } else {
                 resolve(localStorage.getItem(key));
@@ -87,17 +103,23 @@
 
     const setStorage = (key, value) => {
         return new Promise((resolve) => {
-            const storage = window.browser?.storage || window.chrome.storage;
-            if (storage) {
-                storage.local.set({ [key]: value }, resolve);
+            if (typeof browser !== 'undefined' && browser.storage && browser.storage.local) {
+                browser.storage.local.set({ [key]: value }).then(resolve).catch((error) => {
+                    console.error(`Storage set error for key '${key}':`, error);
+                    localStorage.setItem(key, JSON.stringify(value));
+                    resolve();
+                });
             } else {
-                localStorage.setItem(key, value);
+                localStorage.setItem(key, JSON.stringify(value));
                 resolve();
             }
         });
     };
 
-    const showFireworks = () => {
+    const showFireworks = async () => {
+        const enableAnimations = await getStorage(STORAGE_KEYS.ENABLE_ANIMATIONS) || true;
+        if (!enableAnimations) return;
+        
         const fireworks = get('fireworks');
         if (fireworks) {
             fireworks.style.display = 'block';
@@ -106,11 +128,8 @@
     };
 
     const updateTime = () => {
-        const now = new Date();
-        const timeEl = get('currentTime');
-        const dateEl = get('currentDate');
-        if (timeEl) timeEl.textContent = now.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', hour12: false });
-        if (dateEl) dateEl.textContent = now.toLocaleDateString('en', { weekday: 'long', month: 'short', day: 'numeric' });
+        // Time display elements not present in current HTML
+        // Keeping function for potential future use
     };
 
     const getStreakData = async () => {
@@ -209,6 +228,19 @@
         const questCount = get('questCount');
         if (!todoList) return;
 
+        // Clean up existing event listeners
+        const existingCheckboxes = todoList.querySelectorAll('.quest-checkbox');
+        existingCheckboxes.forEach(cb => {
+            const clone = cb.cloneNode(true);
+            cb.parentNode.replaceChild(clone, cb);
+        });
+
+        const existingDeleteBtns = todoList.querySelectorAll('.quest-delete');
+        existingDeleteBtns.forEach(btn => {
+            const clone = btn.cloneNode(true);
+            btn.parentNode.replaceChild(clone, btn);
+        });
+
         todoList.innerHTML = '';
         
         todos.forEach((todo, index) => {
@@ -269,8 +301,9 @@
     const addTodo = async (text) => {
         if (!text || !text.trim()) return;
         const todos = await getStorage(STORAGE_KEYS.TODOS) || [];
-        if (todos.length >= 3) {
-            alert('Maximum 3 active quests at a time. Complete one first!');
+        const maxQuests = await getStorage(STORAGE_KEYS.MAX_QUESTS) || 3;
+        if (todos.length >= maxQuests) {
+            alert(`Maximum ${maxQuests} active quests at a time. Complete one first!`);
             return;
         }
         todos.push({ text: text.trim() });
@@ -316,7 +349,10 @@
     };
 
     const resetTimer = () => {
-        clearInterval(timerInterval);
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
         timerRunning = false;
         const btn = get('startTimerBtn');
         if (btn) {
@@ -327,7 +363,10 @@
     };
 
     const setTimerDuration = async (minutes) => {
-        clearInterval(timerInterval);
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
         timerRunning = false;
         const btn = get('startTimerBtn');
         if (btn) {
@@ -337,6 +376,7 @@
         totalTimerSeconds = minutes * 60;
         timerSecondsRemaining = minutes * 60;
         await setStorage(STORAGE_KEYS.TIMER_MINUTES, minutes);
+        await setStorage(STORAGE_KEYS.DEFAULT_TIMER, minutes);
         updateTimerDisplay();
 
         document.querySelectorAll('.preset-btn').forEach(btn => {
@@ -344,41 +384,57 @@
         });
     };
 
-    const applyBackground = (background) => {
-        if (background?.type === 'custom' && background.image) {
-            document.body.style.background = `url(${background.image}) center/cover no-repeat fixed`;
-        } else if (background?.preset && background.preset !== 'default') {
-            const preset = BACKGROUND_PRESETS.find(p => p.id === background.preset);
-            if (preset) document.body.style.background = preset.gradient;
-        } else {
+    const applyBackground = async () => {
+        try {
+            const backgroundPref = await getStorage(STORAGE_KEYS.BACKGROUND) || 'seasonal';
+            
+            if (backgroundPref === 'seasonal') {
+                document.body.style.background = getSeasonalGradient();
+            } else {
+                const preset = BACKGROUND_PRESETS.find(p => p.id === backgroundPref);
+                if (preset) {
+                    document.body.style.background = preset.gradient;
+                } else {
+                    document.body.style.background = getSeasonalGradient();
+                }
+            }
+        } catch (error) {
+            console.error('Error applying background:', error);
             document.body.style.background = getSeasonalGradient();
         }
     };
 
-    const initializeBackground = async () => {
-        try {
-            const background = await getStorage('background');
-            applyBackground(background || { preset: 'default' });
-        } catch (e) {
-            applyBackground({ preset: 'default' });
-        }
-    };
+    const initializeBackground = applyBackground;
 
     const toggleDarkMode = async () => {
-        const isDark = document.body.classList.toggle('dark-mode');
-        await setStorage(STORAGE_KEYS.DARK_MODE, isDark);
+        const currentTheme = await getStorage(STORAGE_KEYS.THEME) || 'system';
+        let newTheme;
+        
+        if (currentTheme === 'light') {
+            newTheme = 'dark';
+        } else if (currentTheme === 'dark') {
+            newTheme = 'system';
+        } else {
+            newTheme = 'light';
+        }
+        
+        await setStorage(STORAGE_KEYS.THEME, newTheme);
+        await initializeDarkMode();
     };
 
     const initializeDarkMode = async () => {
         try {
-            const darkMode = await getStorage(STORAGE_KEYS.DARK_MODE);
+            const themePref = await getStorage(STORAGE_KEYS.THEME) || 'system';
+            const darkMode = themePref === 'dark' || (themePref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
             if (darkMode) document.body.classList.add('dark-mode');
-        } catch (e) {}
+        } catch (e) {
+            console.error('Error initializing dark mode:', e);
+        }
     };
 
     const showRandomQuote = () => {
-        const quoteEl = get('dailyQuote');
-        if (quoteEl) quoteEl.textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+        // Quote display element not present in current HTML
+        // Keeping function for potential future use
     };
 
     const exportData = async () => {
@@ -394,7 +450,54 @@
         a.click();
     };
 
+    const cleanupEventListeners = () => {
+        const darkModeToggle = get('darkModeToggle');
+        const addQuestForm = get('addQuestForm');
+        const startTimerBtn = get('startTimerBtn');
+        const resetTimerBtn = get('resetTimerBtn');
+        const statsToggle = get('statsToggle');
+        const closeProgressPanel = get('closeProgressPanel');
+        const exportDataBtn = get('exportDataBtn');
+
+        if (darkModeToggle) {
+            const clone = darkModeToggle.cloneNode(true);
+            darkModeToggle.parentNode.replaceChild(clone, darkModeToggle);
+        }
+        if (addQuestForm) {
+            const clone = addQuestForm.cloneNode(true);
+            addQuestForm.parentNode.replaceChild(clone, addQuestForm);
+        }
+        if (startTimerBtn) {
+            const clone = startTimerBtn.cloneNode(true);
+            startTimerBtn.parentNode.replaceChild(clone, startTimerBtn);
+        }
+        if (resetTimerBtn) {
+            const clone = resetTimerBtn.cloneNode(true);
+            resetTimerBtn.parentNode.replaceChild(clone, resetTimerBtn);
+        }
+        if (statsToggle) {
+            const clone = statsToggle.cloneNode(true);
+            statsToggle.parentNode.replaceChild(clone, statsToggle);
+        }
+        if (closeProgressPanel) {
+            const clone = closeProgressPanel.cloneNode(true);
+            closeProgressPanel.parentNode.replaceChild(clone, closeProgressPanel);
+        }
+        if (exportDataBtn) {
+            const clone = exportDataBtn.cloneNode(true);
+            exportDataBtn.parentNode.replaceChild(clone, exportDataBtn);
+        }
+
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            const clone = btn.cloneNode(true);
+            btn.parentNode.replaceChild(clone, btn);
+        });
+    };
+
     const init = async () => {
+        // Clean up any existing event listeners
+        cleanupEventListeners();
+
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey && e.shiftKey && e.key === 'S') {
                 e.preventDefault();
@@ -424,14 +527,19 @@
         get('closeProgressPanel')?.addEventListener('click', () => { get('progressPanel').style.display = 'none'; });
         get('exportDataBtn')?.addEventListener('click', exportData);
 
+        // Clean up timer on page unload
+        window.addEventListener('beforeunload', () => {
+            clearInterval(timerInterval);
+        });
+
         initializeDarkMode();
         initializeBackground();
-        updateTime();
-        setInterval(updateTime, 1000);
+        // updateTime();
+        // setInterval(updateTime, 1000);
         loadTodos();
-        showRandomQuote();
+        // showRandomQuote();
 
-        const timerMinutes = await getStorage(STORAGE_KEYS.TIMER_MINUTES) || 25;
+        const timerMinutes = await getStorage(STORAGE_KEYS.TIMER_MINUTES) || (await getStorage(STORAGE_KEYS.DEFAULT_TIMER) || 25);
         setTimerDuration(timerMinutes);
     };
 

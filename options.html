@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FocusTab Options</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link rel="icon" type="image/png" href="icons/icon-48.png">
+</head>
+<body class="options-page">
+    <div class="options-container">
+        <header class="options-header">
+            <h1>FocusTab Settings</h1>
+            <p>Customize your productivity experience</p>
+        </header>
+        
+        <main class="options-main">
+            <section class="option-section">
+                <h2>General Settings</h2>
+                <div class="option-item">
+                    <label for="maxQuests">Maximum Quests:</label>
+                    <select id="maxQuests">
+                        <option value="3">3</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+                
+                <div class="option-item">
+                    <label for="defaultTimer">Default Timer (minutes):</label>
+                    <input type="number" id="defaultTimer" min="1" max="120" value="25">
+                </div>
+            </section>
+            
+            <section class="option-section">
+                <h2>Appearance</h2>
+                <div class="option-item">
+                    <label for="themeSelect">Theme:</label>
+                    <select id="themeSelect">
+                        <option value="system">System Default</option>
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                    </select>
+                </div>
+                
+                <div class="option-item">
+                    <label for="backgroundPreset">Background:</label>
+                    <select id="backgroundPreset">
+                        <option value="seasonal">Seasonal (Auto)</option>
+                        <option value="spring">Spring</option>
+                        <option value="summer">Summer</option>
+                        <option value="autumn">Autumn</option>
+                        <option value="winter">Winter</option>
+                        <option value="sunset">Sunset</option>
+                        <option value="ocean">Ocean</option>
+                    </select>
+                </div>
+            </section>
+            
+            <section class="option-section">
+                <h2>Data Management</h2>
+                <div class="option-item">
+                    <button id="exportDataBtn" class="export-btn">Export Data</button>
+                    <button id="importDataBtn" class="import-btn">Import Data</button>
+                </div>
+                <div class="option-item">
+                    <button id="resetStatsBtn" class="reset-btn">Reset All Stats</button>
+                </div>
+            </section>
+            
+            <section class="option-section">
+                <h2>Advanced</h2>
+                <div class="option-item">
+                    <label>
+                        <input type="checkbox" id="enableSound">
+                        Enable completion sounds
+                    </label>
+                </div>
+                <div class="option-item">
+                    <label>
+                        <input type="checkbox" id="enableAnimations">
+                        Enable animations
+                    </label>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="options-footer">
+            <button id="saveSettingsBtn" class="save-btn">Save Settings</button>
+            <button id="cancelSettingsBtn" class="cancel-btn">Cancel</button>
+            <div class="version-info">FocusTab v2.0.1</div>
+        </footer>
+    </div>
+    
+    <script src="options.js"></script>
+</body>
+</html>
